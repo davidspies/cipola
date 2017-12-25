@@ -1,29 +1,26 @@
-{-# LANGUAGE NamedFieldPuns #-}
-{-# LANGUAGE TypeFamilies   #-}
+{-# LANGUAGE FlexibleContexts     #-}
+{-# LANGUAGE ScopedTypeVariables  #-}
+{-# LANGUAGE UndecidableInstances #-}
 
 module SquareRing where
 
-import           Control.Monad        (join)
-import           Control.Monad.Reader (ask, withReader)
-import           ModRing
-import           Prelude              hiding (Num (..))
-import           Ring
+import           Data.Reflection (Reifies, reflect)
+import           Modulo
 
-data SquareRing = SquareRing {base :: ModRing, tsqr :: Elem ModRing}
+newtype SquareRing s = SquareRing {tsqr :: E s}
+data Sq s t = Sq (E s) (E s)
 
-instance Ring SquareRing where
-  data Elem SquareRing = ES {constant :: Elem ModRing, tcoef :: Elem ModRing}
-    deriving (Eq, Show)
-  zero = withReader base $ ES <$> zero <*> zero
-  one = withReader base $ ES <$> one <*> zero
-  negate ES{constant, tcoef} = withReader base $
-    ES <$> negate constant <*> negate tcoef
-  (+) (ES cl tl) (ES cr tr) = withReader base $ ES <$> cl + cr <*> tl + tr
-  (*) (ES cl tl) (ES cr tr) = do
-    SquareRing{tsqr} <- ask
-    withReader base $ do
-      left <- join $ (+) <$> (cl * cr) <*> join ((* tsqr) <$> (tl * tr))
-      right <- join $ (+) <$> (cl * tr) <*> (tl * cr)
-      return $ ES left right
-  (-) (ES cl tl) (ES cr tr) = withReader base $ ES <$> cl - cr <*> tl - tr
-  e n = withReader base $ ES <$> e n <*> zero
+instance (Reifies s Modulo, Reifies t (SquareRing s)) => Eq (Sq s t) where
+  (==) (Sq rx ix) (Sq ry iy) = rx == ry && ix == iy
+
+instance (Reifies s Modulo, Reifies t (SquareRing s)) => Num (Sq s t) where
+  (+) (Sq rx ix) (Sq ry iy) = Sq (rx + ry) (ix + iy)
+  (*) e@(Sq rx ix) (Sq ry iy) = Sq (rx * ry + tsqrOf e * ix * iy) (rx * iy + ry * ix)
+  negate (Sq r i) = Sq (negate r) (negate i)
+  (-) (Sq rx ix) (Sq ry iy) = Sq (rx - ry) (ix - iy)
+  abs = error "abs unsupported"
+  signum = error "signum unsupported"
+  fromInteger n = Sq (fromInteger n) 0
+
+tsqrOf :: (Reifies s Modulo, Reifies t (SquareRing s)) => proxy t -> E s
+tsqrOf = tsqr . reflect

@@ -1,4 +1,7 @@
-{-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE FlexibleContexts    #-}
+{-# LANGUAGE LambdaCase          #-}
+{-# LANGUAGE NamedFieldPuns      #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 
 module Cipola
     ( cipola
@@ -6,11 +9,11 @@ module Cipola
     , parity
     ) where
 
-import           Control.Monad.Reader (Reader, asks, runReader, withReader)
-import           ModRing
-import           Prelude              hiding (Num (..), toInteger, (^))
-import qualified Prelude              as P
-import           Ring
+import           Data.List       (find)
+import           Data.Proxy      (Proxy)
+import           Data.Reflection (Reifies, reify)
+import           Modulo
+import           Prelude         hiding (toInteger)
 import           SquareRing
 
 data Parity = Even | Odd
@@ -28,8 +31,8 @@ jacobi a b
   | otherwise = case parity a of
       Even -> case parity (a `quot` 2) of
         Even -> jacobi (a `quot` 4) b
-        Odd  -> jacobi (a `quot` 2) b P.* jacobi2 b
-      Odd -> (if  a `rem` 4 == 3 && b `rem` 4 == 3 then (-1) else 1) P.* jacobi b a
+        Odd  -> jacobi (a `quot` 2) b * jacobi2 b
+      Odd -> (if  a `rem` 4 == 3 && b `rem` 4 == 3 then (-1) else 1) * jacobi b a
 
 jacobi2 :: Integer -> Integer
 jacobi2 n = case n `rem` 8 of
@@ -39,37 +42,19 @@ jacobi2 n = case n `rem` 8 of
   7 -> 1
   _ -> error "Bad input"
 
-firstJustM :: Monad m => [a] -> (a -> m (Maybe b)) -> m (Maybe b)
-firstJustM xs0 f = go xs0
-  where
-    go xs = case xs of
-      [] -> return Nothing
-      x : xr -> f x >>= \case
-        Nothing -> go xr
-        Just res -> return $ Just res
-
 -- \a p -> isPrime p && p > 2 ==> case cipola a p of
 --    Nothing -> jacobi a p /= 1
 --    Just x -> x ^ 2 `mod` p == a
 cipola :: Integer -> Integer -> Maybe Integer
-cipola a p = toInteger <$> runReader (e a >>= cipolaRing) (ModRing p)
+cipola a p = reify (Modulo p) $ \(_ :: Proxy s) -> toInteger <$> cipolaRing (fromInteger a :: E s)
 
-cipolaRing :: Elem ModRing -> Reader ModRing (Maybe (Elem ModRing))
+cipolaRing :: forall s. Reifies s Modulo => E s -> Maybe (E s)
 cipolaRing a = do
-  m <- (\m -> if m <= 1 || even m then error "Bad input" else m) <$> asks modulus
-  r <- firstJustM [1 .. (m P.- 1)] $ \x -> do
-    x' <- e x
-    tsqr' <- do
-      v <- x' * x'
-      v - a
-    return $ if jacobi (toInteger tsqr') m == -1
-      then Just (x', tsqr')
-      else Nothing
-  v0 <- zero
-  v1 <- one
-  case r of
-    Nothing -> return Nothing
-    Just (x, tsqr') -> withReader (`SquareRing` tsqr') $ do
-      let s = ES x v1
-      ES result z <- s ^ ((m P.+ 1) `quot` 2)
-      return $ if z == v0 then Just result else Nothing
+    (x, tsqr) <-
+      find ((== -1) . (`jacobi` m) . snd)
+        [(fromInteger x, x * x - toInteger a) | x <- [2..(fromInteger (m - 1))]]
+    reify SquareRing{tsqr = fromInteger tsqr :: E s} $ \(_ :: Proxy t) ->
+      let (Sq result z) = (Sq x 1 :: Sq s t) ^ ((m + 1) `quot` 2)
+      in if z == 0 then Just result else Nothing
+  where
+    m = modulusOf a

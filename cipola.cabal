@@ -48,19 +48,25 @@ cabal-version:       >=1.10
 
 library
   -- Modules exported by the library.
-  exposed-modules:     Lib, SquareRing, Lift, ModRing, Cipola, Ring
+  exposed-modules:     Cipola
+                       Lib
+                       Lift
+                       Modulo
+                       SquareRing
 
   -- Modules included in this library but not exported.
-  -- other-modules:
+  other-modules:       Modulo.Internal
 
   -- LANGUAGE extensions used by modules in this package.
-  other-extensions:    NamedFieldPuns, TypeFamilies, FlexibleInstances, LambdaCase, ScopedTypeVariables
+  -- other-extensions:
 
   -- Other library packages from which modules are imported.
-  build-depends:       base, mtl
+  build-depends:       base, reflection
 
   -- Directories containing source files.
   hs-source-dirs:      src
 
   -- Base language which the package is written in.
   default-language:    Haskell2010
+
+  ghc-options:         -Wall -Werror
