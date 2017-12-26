@@ -52,6 +52,7 @@ library
                        Lib
                        Lift
                        Modulo
+                       PrimeVector
                        SquareRing
 
   -- Modules included in this library but not exported.
