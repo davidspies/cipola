@@ -8,7 +8,8 @@ import           Data.Reflection (Reifies, reflect)
 import           Modulo
 
 newtype SquareRing s = SquareRing {tsqr :: E s}
-data Sq s t = Sq (E s) (E s)
+data Sq s t = Sq !(E s) !(E s)
+  deriving (Show)
 
 instance (Reifies s Modulo, Reifies t (SquareRing s)) => Eq (Sq s t) where
   (==) (Sq rx ix) (Sq ry iy) = rx == ry && ix == iy

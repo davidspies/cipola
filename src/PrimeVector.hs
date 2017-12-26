@@ -4,6 +4,7 @@
 
 module PrimeVector
     ( PrimeVector
+    , fromPrimes
     , isPrime
     , primeDecomposition
     , toInteger
@@ -14,8 +15,9 @@ import           Data.Proxy      (Proxy)
 import           Data.Reflection (reify)
 import           Modulo          (E, Modulo (Modulo))
 import           Prelude         hiding (toInteger)
+import           Util            (PrimePow, sqr)
 
-newtype PrimeVector = PrimeVector [(Integer, Int)]
+newtype PrimeVector = PrimeVector [PrimePow]
 
 instance Num PrimeVector where
   (+) x y = fromInteger (toInteger x + toInteger y)
@@ -41,9 +43,6 @@ instance Num PrimeVector where
       go f n = let (k, leftover) = f `multiplicityIn` n in
         (if k > 0 then ((f, k) :) else id) $ go (f + 1) leftover
 
-sqr :: Num a => a -> a
-sqr = (^ (2 :: Int))
-
 multiplicityIn :: Integer -> Integer -> (Int, Integer)
 multiplicityIn f = go 0
   where
@@ -53,7 +52,7 @@ multiplicityIn f = go 0
       where
         (q, r) = n `quotRem` f
 
-primeDecomposition :: PrimeVector -> [(Integer, Int)]
+primeDecomposition :: PrimeVector -> [PrimePow]
 primeDecomposition (PrimeVector fs) = fs
 
 toInteger :: PrimeVector -> Integer
@@ -91,3 +90,12 @@ ceillog2 n0
     go !accum = \case
       1 -> accum
       n -> go (accum + 1) ((n + 1) `quot` 2)
+
+fromPrimes :: [PrimePow] -> PrimeVector
+fromPrimes xs0 = validate xs0 `seq` PrimeVector xs0
+  where
+    validate [] = ()
+    validate ((_, n0) : _) | n0 <= 0 = error "Exponents not all positive"
+    validate ((p0, _) : (p1, _) : _) | p1 < p0 = error "Terms out of order"
+    validate ((p0, _) : _) | not (isPrime p0) = error "Not all prime"
+    validate ((_, _) : xs) = validate xs

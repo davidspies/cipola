@@ -2,13 +2,16 @@
 
 module Lift where
 
+import           Cipola          (cipola)
+import           Data.Foldable   (foldl')
 import           Data.Proxy      (Proxy)
 import           Data.Reflection (reify)
 import           Modulo          (E, Modulo (Modulo), inv, toInteger)
 import           Prelude         hiding (toInteger)
+import           Util            (PrimePow)
 
-liftSol :: Integer -> Int -> Integer -> Integer -> Integer
-liftSol prime curPow val sol = mult * (prime ^ curPow) + sol
+liftSol :: PrimePow -> Integer -> Integer -> Integer
+liftSol (prime, curPow) val sol = mult * (prime ^ curPow) + sol
   where
     curMod = prime ^ curPow
     k = val `div` curMod
@@ -17,3 +20,7 @@ liftSol prime curPow val sol = mult * (prime ^ curPow) + sol
       let n = (fromInteger (k - j) :: E s)
           twoSolInv = inv $ fromInteger (2 * sol)
       in toInteger $ n * twoSolInv
+
+rootRelPrimePow :: Integer -> PrimePow -> [Integer]
+rootRelPrimePow a (p, k) =
+    (\sol0 -> foldl' (\prevSol i -> liftSol (p, i) a prevSol) sol0 [1..(k - 1)]) <$> cipola a p

@@ -15,6 +15,7 @@ import           Prelude         hiding (toInteger)
 
 newtype Modulo = Modulo {modulus :: Integer}
 newtype E s = E Integer
+  deriving (Show)
 
 instance Reifies s Modulo => Eq (E s) where
   (==) (E x) (E y) = x == y

@@ -1,5 +1,4 @@
 {-# LANGUAGE FlexibleContexts    #-}
-{-# LANGUAGE LambdaCase          #-}
 {-# LANGUAGE NamedFieldPuns      #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
@@ -9,12 +8,15 @@ module Cipola
     , parity
     ) where
 
-import           Data.List       (find)
+import           Data.List       (find, sortOn)
+import           Data.Maybe      (maybeToList)
 import           Data.Proxy      (Proxy)
 import           Data.Reflection (Reifies, reify)
 import           Modulo
 import           Prelude         hiding (toInteger)
 import           SquareRing
+import           System.Random   (mkStdGen, randomRs)
+import           Util            (sqr)
 
 data Parity = Even | Odd
 
@@ -45,16 +47,20 @@ jacobi2 n = case n `rem` 8 of
 -- \a p -> isPrime p && p > 2 ==> case cipola a p of
 --    Nothing -> jacobi a p /= 1
 --    Just x -> x ^ 2 `mod` p == a
-cipola :: Integer -> Integer -> Maybe Integer
+cipola :: Integer -> Integer -> [Integer]
 cipola a p = reify (Modulo p) $ \(_ :: Proxy s) -> toInteger <$> cipolaRing (fromInteger a :: E s)
 
-cipolaRing :: forall s. Reifies s Modulo => E s -> Maybe (E s)
+cipolaRing :: forall s. Reifies s Modulo => E s -> [E s]
 cipolaRing a = do
-    (x, tsqr) <-
-      find ((== -1) . (`jacobi` m) . snd)
-        [(fromInteger x, x * x - toInteger a) | x <- [2..(fromInteger (m - 1))]]
-    reify SquareRing{tsqr = fromInteger tsqr :: E s} $ \(_ :: Proxy t) ->
+  (x, tsqr) <-
+    maybeToList $ find ((/= 1) . (`jacobi` m) . snd)
+      [(fromInteger x, sqr x - toInteger a)
+        | x <- randomRs (1, fromInteger (m - 1)) (mkStdGen 314159)]
+  if sqr x == a
+    then allSolutions x
+    else reify SquareRing{tsqr = fromInteger tsqr :: E s} $ \(_ :: Proxy t) ->
       let (Sq result z) = (Sq x 1 :: Sq s t) ^ ((m + 1) `quot` 2)
-      in if z == 0 then Just result else Nothing
+      in if z == 0 then allSolutions result else []
   where
+    allSolutions x = sortOn toInteger [x, -x]
     m = modulusOf a

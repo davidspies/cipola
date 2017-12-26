@@ -57,12 +57,13 @@ library
 
   -- Modules included in this library but not exported.
   other-modules:       Modulo.Internal
+                       Util
 
   -- LANGUAGE extensions used by modules in this package.
   -- other-extensions:
 
   -- Other library packages from which modules are imported.
-  build-depends:       base, reflection
+  build-depends:       base, random, reflection
 
   -- Directories containing source files.
   hs-source-dirs:      src
