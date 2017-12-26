@@ -1,15 +1,15 @@
-{-# LANGUAGE FlexibleContexts      #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE NamedFieldPuns        #-}
-{-# LANGUAGE ScopedTypeVariables   #-}
-{-# LANGUAGE TypeFamilies          #-}
-{-# LANGUAGE UndecidableInstances  #-}
+{-# LANGUAGE FlexibleContexts     #-}
+{-# LANGUAGE LambdaCase           #-}
+{-# LANGUAGE ScopedTypeVariables  #-}
+{-# LANGUAGE UndecidableInstances #-}
 
 module Modulo
     ( module X
+    , crt
     , inv
     ) where
 
+import           Data.Foldable   (foldl')
 import           Data.Reflection (Reifies (..))
 import           Modulo.Internal as X
 import           Prelude         hiding (toInteger)
@@ -31,3 +31,18 @@ euclidean a b = go (1, 0, a) (0, 1, b)
     go (x0, y0, r0) (x1, y1, r1) = go (x1, y1, r1) (x0 - m * x1, y0 - m * y1, r2)
       where
         (m, r2) = r0 `divMod` r1
+
+crt :: [(Integer, Integer)] -> Maybe (Integer, Integer)
+crt = foldl' (\case
+    Nothing -> const Nothing
+    Just (x1, m1) -> \(x2, m2) -> crt2 (x1, m1) (x2, m2)
+  ) (Just (0, 1))
+
+crt2 :: (Integer, Integer) -> (Integer, Integer) -> Maybe (Integer, Integer)
+crt2 (a1, m1) (a2, m2)
+    | r == a2 `mod` g = Just ((a1 `div` g * y * m2 + a2 `div` g * x * m1) `mod` m + r, m)
+    | otherwise = Nothing
+  where
+    (x, y, g) = euclidean m1 m2
+    m = m1 * m2 `div` g
+    r = a1 `mod` g
