@@ -9,7 +9,7 @@ module Cipola
     ) where
 
 import           Data.List       (find, sortOn)
-import           Data.Maybe      (maybeToList)
+import           Data.Maybe      (fromJust)
 import           Data.Proxy      (Proxy)
 import           Data.Reflection (Reifies, reify)
 import           Modulo
@@ -51,14 +51,14 @@ cipola :: Integer -> Integer -> [Integer]
 cipola a p = reify (Modulo p) $ \(_ :: Proxy s) -> toInteger <$> cipolaRing (fromInteger a :: E s)
 
 cipolaRing :: forall s. Reifies s Modulo => E s -> [E s]
-cipolaRing a = do
-  (x, tsqr) <-
-    maybeToList $ find ((/= 1) . (`jacobi` m) . snd)
-      [(fromInteger x, sqr x - toInteger a)
-        | x <- randomRs (1, fromInteger (m - 1)) (mkStdGen 314159)]
-  if sqr x == a
+cipolaRing a =
+  let (x, tsqr) = fromJust $
+        find ((/= 1) . (`jacobi` m) . toInteger . snd)
+          [let xe = fromInteger x' in (xe, sqr xe - a)
+            | x' <- randomRs (1, m - 1) (mkStdGen 314159)]
+  in if sqr x == a
     then allSolutions x
-    else reify SquareRing{tsqr = fromInteger tsqr :: E s} $ \(_ :: Proxy t) ->
+    else reify SquareRing{tsqr} $ \(_ :: Proxy t) ->
       let (Sq result z) = (Sq x 1 :: Sq s t) ^ ((m + 1) `quot` 2)
       in if z == 0 then allSolutions result else []
   where

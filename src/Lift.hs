@@ -4,6 +4,7 @@ module Lift where
 
 import           Cipola          (cipola)
 import           Data.Foldable   (foldl')
+import           Data.List       (sort)
 import           Data.Proxy      (Proxy)
 import           Data.Reflection (reify)
 import           Modulo          (E, Modulo (Modulo), inv, toInteger)
@@ -22,5 +23,5 @@ liftSol (prime, curPow) val sol = mult * (prime ^ curPow) + sol
       in toInteger $ n * twoSolInv
 
 rootRelPrimePow :: Integer -> PrimePow -> [Integer]
-rootRelPrimePow a (p, k) =
+rootRelPrimePow a (p, k) = sort $
     (\sol0 -> foldl' (\prevSol i -> liftSol (p, i) a prevSol) sol0 [1..(k - 1)]) <$> cipola a p
