@@ -31,18 +31,18 @@ isPrime n0
     go n = all checkCandidate candidates
       where
         candidates = [2..(min (n - 1) (sqr $ ceillog2 $ fromInteger n))]
-    checkCandidate a = reify (Modulo n0) $ \(_ :: Proxy s) ->
-      let t0 = ((fromInteger a :: E s) ^ m)
-      in t0 == 1 || t0 == -1 ||
-        case find (\x -> x == 1 || x == -1) (take k $ iterate sqr t0) of
-            Nothing   -> False
-            Just (-1) -> True
-            Just _    -> False
-    (m, k) = checkOrders (n0 - 1) 0
-      where
-        checkOrders n !count
-          | odd n = (n, count)
-          | otherwise = checkOrders (n `quot` 2) (count + 1)
+        checkCandidate a = reify (Modulo n) $ \(_ :: Proxy s) ->
+          let t0 = ((fromInteger a :: E s) ^ m)
+          in t0 == 1 || t0 == -1 ||
+            case find (\x -> x == 1 || x == -1) (take k $ iterate sqr t0) of
+                Nothing   -> False
+                Just (-1) -> True
+                Just _    -> False
+        (m, k) = checkOrders (n - 1) 0
+          where
+            checkOrders n' !count
+              | odd n' = (n', count)
+              | otherwise = checkOrders (n' `quot` 2) (count + 1)
 
 mkPrime :: Integer -> Maybe Prime
 mkPrime n
