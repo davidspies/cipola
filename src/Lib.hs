@@ -1,24 +1,27 @@
+{-# LANGUAGE TupleSections #-}
+
 module Lib
-    ( cipola
-    , rootPow2
+    ( modRoot
     ) where
 
-import           Cipola
+import           Data.Bifunctor (second)
+import           Data.Maybe     (fromJust)
+import           Lift           (rootPrimePow)
+import           Modulo         (crt)
+import           PrimeVector    (PrimeVector, fromPrimes, primeDecomposition)
+import           Util           (PrimePow)
 
--- Finds (xs, n') st. forall v: v `mod` 2^n' `elem` xs <-> v^2 `mod` 2^n == a
--- and length xs <= 4
-rootPow2 :: Integer -> Int -> ([Integer], Int)
-rootPow2 a n = case n of
-  _ | n < 0 -> error "Exponent must be positive"
-  0 -> ([0], 0)
-  1 -> ([a `mod` 2], fromInteger $ a `mod` 2)
-  _ -> case parity a of
-    Even ->
-      case parity (a `quot` 2) of
-        Even ->
-          let (xs, n') = rootPow2 (a `quot` 4) (n - 2)
-          in (map (2 *) xs, n' + 1)
-        Odd -> ([], n)
-    Odd ->
-      let (xs, _) = rootPow2 (a `mod` (2^(n - 1))) (n - 1)
-      in (concat [[x, 2^n - x] | x <- xs, x^(2 :: Int) `mod` 2^n == a `mod` 2^n], n)
+modRoot :: Integer -> PrimeVector -> ([Integer], PrimeVector)
+modRoot a pv0 = second fst $ go subsols
+  where
+    subsols :: [([Integer], PrimePow)]
+    subsols = [second (p,) $ rootPrimePow a (p, k) | (p, k) <- primeDecomposition pv0]
+    go :: [([Integer], PrimePow)] -> ([Integer], (PrimeVector, Integer))
+    go [] = ([0], (1, 1))
+    go ((ns, (p, k)) : rest) =
+      let (rs, (pv, pvi)) = go rest
+          pk = p ^ k
+      in (, (pv * fromPrimes [(p,k)], pvi * pk)) $ do
+      n <- ns
+      r <- rs
+      return $ fst $ fromJust $ crt [(n, pk), (r, pvi)]

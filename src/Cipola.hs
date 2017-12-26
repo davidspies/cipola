@@ -4,8 +4,6 @@
 
 module Cipola
     ( cipola
-    , Parity(..)
-    , parity
     ) where
 
 import           Data.List       (find, sortOn)

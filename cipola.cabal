@@ -48,15 +48,16 @@ cabal-version:       >=1.10
 
 library
   -- Modules exported by the library.
-  exposed-modules:     Cipola
-                       Lib
-                       Lift
+  exposed-modules:     Lib
                        Modulo
                        PrimeVector
                        SquareRing
 
   -- Modules included in this library but not exported.
-  other-modules:       Modulo.Internal
+  other-modules:       Cipola
+                       Lift
+                       Modulo.Internal
+                       Pow2
                        Util
 
   -- LANGUAGE extensions used by modules in this package.
