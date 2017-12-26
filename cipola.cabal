@@ -50,6 +50,7 @@ library
   -- Modules exported by the library.
   exposed-modules:     Lib
                        Modulo
+                       Prime
                        PrimeVector
                        SquareRing
 
@@ -58,6 +59,7 @@ library
                        Lift
                        Modulo.Internal
                        Pow2
+                       Prime.Internal
                        Util
 
   -- LANGUAGE extensions used by modules in this package.

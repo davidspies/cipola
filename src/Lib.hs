@@ -8,8 +8,9 @@ import           Data.Bifunctor (second)
 import           Data.Maybe     (fromJust)
 import           Lift           (rootPrimePow)
 import           Modulo         (crt)
+import           Prime          (PrimePow)
+import qualified Prime
 import           PrimeVector    (PrimeVector, fromPrimes, primeDecomposition)
-import           Util           (PrimePow)
 
 modRoot :: Integer -> PrimeVector -> ([Integer], PrimeVector)
 modRoot a pv0 = second fst $ go subsols
@@ -20,7 +21,7 @@ modRoot a pv0 = second fst $ go subsols
     go [] = ([0], (1, 1))
     go ((ns, (p, k)) : rest) =
       let (rs, (pv, pvi)) = go rest
-          pk = p ^ k
+          pk = Prime.toInteger p ^ k
       in (, (pv * fromPrimes [(p,k)], pvi * pk)) $ do
       n <- ns
       r <- rs
