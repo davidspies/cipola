@@ -16,14 +16,7 @@ import           Prime           (Prime)
 import qualified Prime
 import           SquareRing
 import           System.Random   (mkStdGen, randomRs)
-import           Util            (sqr)
-
-data Parity = Even | Odd
-
-parity :: Integer -> Parity
-parity n
-  | odd n = Odd
-  | otherwise = Even
+import           Util            (Parity (..), parity, sqr)
 
 jacobi :: Integer -> Integer -> Integer
 jacobi a b
@@ -49,15 +42,15 @@ jacobi2 n = case n `rem` 8 of
 --    Just x -> x ^ 2 `mod` p == a
 cipola :: Integer -> Prime -> [Integer]
 cipola a p = reify (Modulo $ Prime.toInteger p) $ \(_ :: Proxy s) ->
-    E.toInteger <$> cipolaRing (fromInteger a :: E s
-  )
+    E.toInteger <$> cipolaRing (fromInteger a :: E s)
+
+randomModuli :: Reifies s Modulo => proxy s -> [E s]
+randomModuli proxy = map fromInteger $ randomRs (0, modulusOf proxy - 1) (mkStdGen 314159)
 
 cipolaRing :: forall s. Reifies s Modulo => E s -> [E s]
 cipolaRing a =
   let (x, tsqr) = fromJust $
-        find ((/= 1) . (`jacobi` m) . E.toInteger . snd)
-          [let xe = fromInteger x' in (xe, sqr xe - a)
-            | x' <- randomRs (1, m - 1) (mkStdGen 314159)]
+        find ((/= 1) . (`jacobi` m) . E.toInteger . snd) [(x', sqr x' - a) | x' <- randomModuli a]
   in if sqr x == a
     then allSolutions x
     else reify SquareRing{tsqr} $ \(_ :: Proxy t) ->
