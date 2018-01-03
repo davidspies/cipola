@@ -90,5 +90,6 @@ test-suite cipola-test
     , QuickCheck
   other-modules:       Test.LibSpec
                        Test.ModuloSpec
+                       Test.PrimeSpec
   default-language: Haskell2010
   ghc-options: -Wall -Werror

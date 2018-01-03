@@ -27,6 +27,7 @@ isPrime n0 = positiveIsPrime (abs n0)
 -- Uses Miller-Rabin primality-testing. Determines that a number is either prime or a counterexample
 -- to ERH (Extended Riemann Hypothesis).
 positiveIsPrime :: Integer -> Bool
+positiveIsPrime 1 = False
 positiveIsPrime n = reify (Modulo n) $ \(_ :: Proxy s) ->
   let
     candidates = map fromInteger [2..(min (n - 1) (sqr $ P.toInteger $ ceillog2 n))]
