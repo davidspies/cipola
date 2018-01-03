@@ -1,6 +1,5 @@
-{-# LANGUAGE FlexibleContexts    #-}
-{-# LANGUAGE NamedFieldPuns      #-}
-{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE NamedFieldPuns   #-}
 
 module Cipola
     ( cipola
@@ -8,15 +7,14 @@ module Cipola
 
 import           Data.List       (find, sortOn)
 import           Data.Maybe      (fromJust)
-import           Data.Proxy      (Proxy)
 import           Data.Reflection (Reifies, reify)
-import           Modulo          (E, Modulo (Modulo), modulusOf)
+import           Modulo          (E, Modulo (Modulo), modulo, modulusOf)
 import qualified Modulo          as E (toInteger)
 import           Prime           (Prime)
 import qualified Prime
 import           SquareRing
 import           System.Random   (mkStdGen, randomRs)
-import           Util            (Parity (..), parity, sqr)
+import           Util            (Parity (..), parity, sqr, withPhantom)
 
 jacobi :: Integer -> Integer -> Integer
 jacobi a b
@@ -41,20 +39,21 @@ jacobi2 n = case n `rem` 8 of
 --    Nothing -> jacobi a p /= 1
 --    Just x -> x ^ 2 `mod` p == a
 cipola :: Integer -> Prime -> [Integer]
-cipola a p = reify (Modulo $ Prime.toInteger p) $ \(_ :: Proxy s) ->
-    E.toInteger <$> cipolaRing (fromInteger a :: E s)
+cipola a p = reify (Modulo $ Prime.toInteger p) $ \m ->
+    E.toInteger <$> cipolaRing (a `modulo` m)
 
 randomModuli :: Reifies s Modulo => proxy s -> [E s]
-randomModuli proxy = map fromInteger $ randomRs (0, modulusOf proxy - 1) (mkStdGen 314159)
+randomModuli m =
+  map (`modulo` m) $ randomRs (0, modulusOf m - 1) (mkStdGen 314159)
 
-cipolaRing :: forall s. Reifies s Modulo => E s -> [E s]
+cipolaRing :: Reifies s Modulo => E s -> [E s]
 cipolaRing a =
   let (x, tsqr) = fromJust $
         find ((/= 1) . (`jacobi` m) . E.toInteger . snd) [(x', sqr x' - a) | x' <- randomModuli a]
   in if sqr x == a
     then allSolutions x
-    else reify SquareRing{tsqr} $ \(_ :: Proxy t) ->
-      let (Sq result z) = (Sq x 1 :: Sq s t) ^ ((m + 1) `quot` 2)
+    else reify SquareRing{tsqr} $ \proxy ->
+      let (Sq result z) = (Sq x 1 `withPhantom` proxy) ^ ((m + 1) `quot` 2)
       in if z == 0 then allSolutions result else []
   where
     allSolutions x = sortOn E.toInteger [x, -x]

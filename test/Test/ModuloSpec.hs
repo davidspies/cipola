@@ -1,21 +1,51 @@
 {-# LANGUAGE PatternSynonyms #-}
+{-# LANGUAGE Rank2Types      #-}
 {-# LANGUAGE TypeOperators   #-}
 
 module Test.ModuloSpec(spec) where
 
 import           Data.List       (foldl', inits, tails)
-import           Modulo          (crt)
+import           Data.Reflection (reify)
+import           Modulo          (Modulo (Modulo), crt, inv, modulo)
+import qualified Modulo
 import           Test.Hspec
 import           Test.QuickCheck
 
 spec :: Spec
-spec = describe "crt" $
-  it "should get the right result" $
-    property $ \(CRTList ans) -> case crt ans of
-        Nothing       -> classify False "unified" $ property (not (unifies ans))
-        Just (res, m) -> classify True "unified" $
-          conjoin [res `mod` n === a `mod` n | (a, n) <- ans] .&&.
-          m === foldl' lcm 1 (map snd ans)
+spec = do
+  describe "Num instance" $ do
+    let
+      testBinOp :: (forall a. Num a => a -> a -> a) -> Property
+      testBinOp op =
+        property $ \n -> n /= 0 ==> \a b ->
+            reify
+              (Modulo n)
+              (\m -> Modulo.toInteger $ (a `modulo` m) `op` (b `modulo` m))
+          ===
+            (a `op` b) `mod` n
+    it "should add correctly" $ testBinOp (+)
+    it "should subtract correctly" $ testBinOp (-)
+    it "should multiply correctly" $ testBinOp (*)
+    it "should negate correctly" $
+      property $ \n -> n /= 0 ==> \a ->
+          reify (Modulo n) (\m -> Modulo.toInteger $ negate (a `modulo` m))
+        ===
+          negate a `mod` n
+  describe "crt" $
+    it "should get the right result" $
+      property $ \(CRTList ans) -> case crt ans of
+          Nothing       -> classify False "unified" $
+            property (not (unifies ans))
+          Just (res, m) -> classify True "unified" $
+            conjoin [res `mod` n === a `mod` n | (a, n) <- ans] .&&.
+            m === foldl' lcm 1 (map snd ans)
+  describe "inv" $
+    it "should get the right result" $
+      property $ \n -> n /= 0 ==> \a -> gcd n a == 1 ==>
+        reify (Modulo n) $ \m ->
+          let a' = a `modulo` m
+              inva = inv a'
+          in inva * a' === 1 .&&. a' * inva === 1
 
 newtype CRTList = CRTList [(Integer, Integer)]
   deriving (Show)

@@ -88,6 +88,7 @@ test-suite cipola-test
     , hspec
     , hspec-discover
     , QuickCheck
+    , reflection
   other-modules:       Test.LibSpec
                        Test.ModuloSpec
                        Test.PrimeSpec

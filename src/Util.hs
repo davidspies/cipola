@@ -2,6 +2,7 @@ module Util
     ( Parity(..)
     , parity
     , sqr
+    , withPhantom
     ) where
 
 data Parity = Even | Odd
@@ -13,3 +14,6 @@ parity n
 
 sqr :: Num a => a -> a
 sqr = (^ (2 :: Int))
+
+withPhantom :: a s -> b s -> a s
+withPhantom = const

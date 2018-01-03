@@ -1,12 +1,9 @@
-{-# LANGUAGE ScopedTypeVariables #-}
-
 module Lift(rootPrimePow) where
 
 import           Cipola          (cipola)
 import           Data.Foldable   (foldl')
-import           Data.Proxy      (Proxy)
 import           Data.Reflection (reify)
-import           Modulo          (E, Modulo (Modulo), inv, toInteger)
+import           Modulo          (Modulo (Modulo), inv, modulo, toInteger)
 import           Pow2            (rootOddPow2)
 import           Prelude         hiding (toInteger)
 import           Prime           (PrimePow)
@@ -20,9 +17,9 @@ liftSol (prime, curPow) val sol = mult * (prime' ^ curPow) + sol
     curMod = prime' ^ curPow
     k = val `div` curMod
     j = sol * sol `div` curMod
-    mult = reify (Modulo prime') $ \(_ :: Proxy s) ->
-      let n = (fromInteger (k - j) :: E s)
-          twoSolInv = inv $ fromInteger (2 * sol)
+    mult = reify (Modulo prime') $ \m ->
+      let n = ((k - j) `modulo` m)
+          twoSolInv = inv $ (2 * sol) `modulo` m
       in toInteger $ n * twoSolInv
 
 rootOddRelPrimePow :: Integer -> PrimePow -> [Integer]

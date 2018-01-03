@@ -1,5 +1,4 @@
-{-# LANGUAGE BangPatterns        #-}
-{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE BangPatterns #-}
 
 module Prime
     ( Prime
@@ -10,9 +9,8 @@ module Prime
     ) where
 
 import           Data.List       (find)
-import           Data.Proxy      (Proxy)
 import           Data.Reflection (reify)
-import           Modulo          (E, Modulo (Modulo))
+import           Modulo          (Modulo (Modulo), modulo)
 import           Prelude         hiding (toInteger)
 import qualified Prelude         as P
 import           Prime.Internal
@@ -28,12 +26,12 @@ isPrime n0 = positiveIsPrime (abs n0)
 -- to ERH (Extended Riemann Hypothesis).
 positiveIsPrime :: Integer -> Bool
 positiveIsPrime 1 = False
-positiveIsPrime n = reify (Modulo n) $ \(_ :: Proxy s) ->
+positiveIsPrime n = reify (Modulo n) $ \m ->
   let
-    candidates = map fromInteger [2..(min (n - 1) (sqr $ P.toInteger $ ceillog2 n))]
-    checkCandidate :: E s -> Bool
+    candidates = map (`modulo` m)
+      [2..(min (n - 1) (sqr $ P.toInteger $ ceillog2 n))]
     checkCandidate a =
-      let t0 = a ^ m
+      let t0 = a ^ r
       in t0 == 1 || t0 == -1 ||
         case find (\x -> x == 1 || x == -1) (take k $ iterate sqr t0) of
             Nothing   -> False
@@ -41,7 +39,7 @@ positiveIsPrime n = reify (Modulo n) $ \(_ :: Proxy s) ->
             Just _    -> False
   in all checkCandidate candidates
   where
-    (m, k) = checkOrders (n - 1) 0
+    (r, k) = checkOrders (n - 1) 0
       where
         checkOrders n' !count = case parity n' of
           Odd  -> (n', count)
