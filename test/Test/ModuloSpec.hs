@@ -6,10 +6,11 @@ module Test.ModuloSpec(spec) where
 
 import           Data.List       (foldl', inits, tails)
 import           Data.Reflection (reify)
-import           Modulo          (Modulo (Modulo), crt, inv, modulo)
-import qualified Modulo
+import           Modulo
+import           Prelude         hiding (toInteger)
 import           Test.Hspec
 import           Test.QuickCheck
+import           ToInteger       (toInteger)
 
 spec :: Spec
 spec = do
@@ -20,7 +21,7 @@ spec = do
         property $ \n -> n /= 0 ==> \a b ->
             reify
               (Modulo n)
-              (\m -> Modulo.toInteger $ (a `modulo` m) `op` (b `modulo` m))
+              (\m -> toInteger $ (a `modulo` m) `op` (b `modulo` m))
           ===
             (a `op` b) `mod` n
     it "should add correctly" $ testBinOp (+)
@@ -28,7 +29,7 @@ spec = do
     it "should multiply correctly" $ testBinOp (*)
     it "should negate correctly" $
       property $ \n -> n /= 0 ==> \a ->
-          reify (Modulo n) (\m -> Modulo.toInteger $ negate (a `modulo` m))
+          reify (Modulo n) (\m -> toInteger $ negate (a `modulo` m))
         ===
           negate a `mod` n
   describe "crt" $

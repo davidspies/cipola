@@ -1,19 +1,21 @@
-{-# LANGUAGE BangPatterns #-}
+{-# LANGUAGE BangPatterns         #-}
+{-# LANGUAGE FlexibleInstances    #-}
+{-# LANGUAGE TypeSynonymInstances #-}
+{-# OPTIONS_GHC -Wno-orphans #-}
 
 module Prime
     ( Prime
     , PrimePow
     , isPrime
     , mkPrime
-    , toInteger
     ) where
 
 import           Data.List       (find)
 import           Data.Reflection (reify)
 import           Modulo          (Modulo (Modulo), modulo)
 import           Prelude         hiding (toInteger)
-import qualified Prelude         as P
 import           Prime.Internal
+import           ToInteger       (ToInteger (..))
 import           Util            (Parity (..), parity, sqr)
 
 type PrimePow = (Prime, Int)
@@ -29,7 +31,7 @@ positiveIsPrime 1 = False
 positiveIsPrime n = reify (Modulo n) $ \m ->
   let
     candidates = map (`modulo` m)
-      [2..(min (n - 1) (sqr $ P.toInteger $ ceillog2 n))]
+      [2..(min (n - 1) (sqr $ toInteger $ ceillog2 n))]
     checkCandidate a =
       let t0 = a ^ r
       in t0 == 1 || t0 == -1 ||
@@ -55,5 +57,5 @@ ceillog2 n0
   | n0 <= 0 = error "Must be positive"
   | otherwise = length (takeWhile (> 1) $ iterate (\n -> (n + 1) `quot` 2) n0)
 
-toInteger :: Prime -> Integer
-toInteger (Prime p) = p
+instance ToInteger PrimePow where
+  toInteger (p, k) = toInteger p ^ k

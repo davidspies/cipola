@@ -4,10 +4,11 @@ module Test.PrimeSpec
     ( spec
     ) where
 
-import           Prime           (isPrime, mkPrime)
-import qualified Prime
+import           Prelude         hiding (toInteger)
+import           Prime
 import           Test.Hspec
 import           Test.QuickCheck
+import           ToInteger       (toInteger)
 
 spec :: Spec
 spec = do
@@ -27,4 +28,4 @@ spec = do
       | n <= 1 -> mkPrime n === Nothing
       | otherwise -> case mkPrime n of
           Nothing -> property $ not $ isPrime n
-          Just p  -> property (isPrime n) .&&. Prime.toInteger p === n
+          Just p  -> property (isPrime n) .&&. toInteger p === n

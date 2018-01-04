@@ -10,8 +10,8 @@ module PrimeVector
 
 import           Prelude        hiding (toInteger)
 import           Prime          (PrimePow)
-import qualified Prime
 import           Prime.Internal (Prime (Prime))
+import           ToInteger      (ToInteger (..))
 import           Util           (sqr)
 
 newtype PrimeVector = PrimeVector [PrimePow]
@@ -56,14 +56,14 @@ multiplicityIn f = go 0
 primeDecomposition :: PrimeVector -> [PrimePow]
 primeDecomposition (PrimeVector fs) = fs
 
-toInteger :: PrimeVector -> Integer
-toInteger (PrimeVector fs) = product [Prime.toInteger f ^ n | (f, n) <- fs]
+instance ToInteger PrimeVector where
+  toInteger (PrimeVector fs) = product [toInteger f ^ n | (f, n) <- fs]
 
 fromPrimes :: [PrimePow] -> PrimeVector
 fromPrimes xs0 = validate xs0 `seq` PrimeVector xs0
   where
     validate [] = ()
     validate ((_, n0) : _) | n0 <= 0 = error "Exponents not all positive"
-    validate ((p0, _) : (p1, _) : _) | Prime.toInteger p1 < Prime.toInteger p0 =
+    validate ((p0, _) : (p1, _) : _) | toInteger p1 < toInteger p0 =
       error "Terms out of order"
     validate ((_, _) : xs) = validate xs

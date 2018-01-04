@@ -9,11 +9,11 @@ import           Data.List       (find, sortOn)
 import           Data.Maybe      (fromJust)
 import           Data.Reflection (Reifies, reify)
 import           Modulo          (E, Modulo (Modulo), modulo, modulusOf)
-import qualified Modulo          as E (toInteger)
+import           Prelude         hiding (toInteger)
 import           Prime           (Prime)
-import qualified Prime
 import           SquareRing
 import           System.Random   (mkStdGen, randomRs)
+import           ToInteger       (toInteger)
 import           Util            (Parity (..), parity, sqr, withPhantom)
 
 jacobi :: Integer -> Integer -> Integer
@@ -39,8 +39,8 @@ jacobi2 n = case n `rem` 8 of
 --    Nothing -> jacobi a p /= 1
 --    Just x -> x ^ 2 `mod` p == a
 cipola :: Integer -> Prime -> [Integer]
-cipola a p = reify (Modulo $ Prime.toInteger p) $ \m ->
-    E.toInteger <$> cipolaRing (a `modulo` m)
+cipola a p = reify (Modulo $ toInteger p) $ \m ->
+    toInteger <$> cipolaRing (a `modulo` m)
 
 randomModuli :: Reifies s Modulo => proxy s -> [E s]
 randomModuli m =
@@ -49,12 +49,12 @@ randomModuli m =
 cipolaRing :: Reifies s Modulo => E s -> [E s]
 cipolaRing a =
   let (x, tsqr) = fromJust $
-        find ((/= 1) . (`jacobi` m) . E.toInteger . snd) [(x', sqr x' - a) | x' <- randomModuli a]
+        find ((/= 1) . (`jacobi` m) . toInteger . snd) [(x', sqr x' - a) | x' <- randomModuli a]
   in if sqr x == a
     then allSolutions x
     else reify SquareRing{tsqr} $ \proxy ->
       let (Sq result z) = (Sq x 1 `withPhantom` proxy) ^ ((m + 1) `quot` 2)
       in if z == 0 then allSolutions result else []
   where
-    allSolutions x = sortOn E.toInteger [x, -x]
+    allSolutions x = sortOn toInteger [x, -x]
     m = modulusOf a

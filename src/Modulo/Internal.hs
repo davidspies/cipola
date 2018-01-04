@@ -7,12 +7,11 @@ module Modulo.Internal
     , E
     , modulo
     , modulusOf
-    , toInteger
     ) where
 
 import           Data.Proxy      (Proxy (Proxy))
 import           Data.Reflection (Reifies (..))
-import           Prelude         hiding (toInteger)
+import           ToInteger       (ToInteger (..))
 
 newtype Modulo = Modulo {modulus :: Integer}
 newtype E s = E Integer
@@ -30,11 +29,11 @@ instance Reifies s Modulo => Num (E s) where
   signum = error "signum unsupported"
   fromInteger n = E $ n `mod` modulusOf (Proxy :: Proxy s)
 
+instance ToInteger (E s) where
+  toInteger (E n) = n
+
 modulo :: Reifies s Modulo => Integer -> proxy s -> E s
 modulo n _ = fromInteger n
 
 modulusOf :: Reifies s Modulo => proxy s -> Integer
 modulusOf = modulus . reflect
-
-toInteger :: E s -> Integer
-toInteger (E n) = n
