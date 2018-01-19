@@ -18,7 +18,7 @@ spec = do
     let
       testBinOp :: (forall a. Num a => a -> a -> a) -> Property
       testBinOp op =
-        property $ \n -> n /= 0 ==> \a b ->
+        property $ \(NonZero n) a b ->
             reify
               (Modulo n)
               (\m -> toInteger $ (a `modulo` m) `op` (b `modulo` m))
@@ -28,7 +28,7 @@ spec = do
     it "should subtract correctly" $ testBinOp (-)
     it "should multiply correctly" $ testBinOp (*)
     it "should negate correctly" $
-      property $ \n -> n /= 0 ==> \a ->
+      property $ \(NonZero n) a ->
           reify (Modulo n) (\m -> toInteger $ negate (a `modulo` m))
         ===
           negate a `mod` n
@@ -42,7 +42,7 @@ spec = do
             m === foldl' lcm 1 (map snd ans)
   describe "inv" $
     it "should get the right result" $
-      property $ \n -> n /= 0 ==> \a -> gcd n a == 1 ==>
+      property $ \(NonZero n) a -> gcd n a == 1 ==>
         reify (Modulo n) $ \m ->
           let a' = a `modulo` m
               inva = inv a'

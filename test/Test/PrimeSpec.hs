@@ -14,8 +14,8 @@ spec :: Spec
 spec = do
   describe "isPrime" $ do
     it "should determine if a number is prime" $
-      property $ \n -> abs n > 1 ==>
-        isPrime n === all (\i -> n `mod` i /= 0) [2 .. abs n - 1]
+      property $ \n ->
+        isPrime n === (abs n > 1 && all (\i -> n `mod` i /= 0) [2 .. abs n - 1])
     it "should not include 0 or 1" $ do
       (-1) `shouldNotSatisfy` isPrime
       0 `shouldNotSatisfy` isPrime
