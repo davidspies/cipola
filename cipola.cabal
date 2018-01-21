@@ -48,7 +48,8 @@ cabal-version:       >=1.10
 
 library
   -- Modules exported by the library.
-  exposed-modules:     Lib
+  exposed-modules:     EllipticCurve
+                       Lib
                        Modulo
                        Prime
                        PrimeVector
@@ -91,8 +92,10 @@ test-suite cipola-test
     , hspec-discover
     , QuickCheck
     , reflection
-  other-modules:       Test.LibSpec
+  other-modules:       Test.EllipticCurveSpec
+                       Test.LibSpec
                        Test.ModuloSpec
+                       Test.Modulo.Util
                        Test.PrimeSpec
                        Test.Prime.Util
                        Test.PrimeVectorSpec
