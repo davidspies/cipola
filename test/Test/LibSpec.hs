@@ -11,6 +11,7 @@ import           Test.Hspec
 import           Test.PrimeVector.Util
 import           Test.QuickCheck
 import           ToInteger             (toInteger)
+import           Util                  (sqr)
 
 spec :: Spec
 spec = describe "modRoot" $ do
@@ -18,7 +19,7 @@ spec = describe "modRoot" $ do
     \(Positive n) a ->
       let (xs, toInteger -> m) = modRoot a (fromInteger n)
           rootsModN = sort [x + i * m | i <- [0 .. n `quot` m - 1], x <- xs]
-      in rootsModN === [x | x <- [0 .. (n - 1)], x ^ (2 :: Int) `mod` n == a `mod` n]
+      in rootsModN === [x | x <- [0 .. (n - 1)], sqr x `mod` n == a `mod` n]
   it "should return a minimal number of roots" $ property $
     \(Positive n) a ->
     let n' = fromInteger n
@@ -34,7 +35,7 @@ spec = describe "modRoot" $ do
       let mI = toInteger m
           nI = toInteger n
       return $ conjoin
-        [ property $ \i -> (i * mI + x) ^ (2 :: Int) `mod` nI === a `mod` nI
+        [ property $ \i -> sqr (i * mI + x) `mod` nI === a `mod` nI
         | x <- take size xs]
 
 divides :: Integer -> Integer -> Bool

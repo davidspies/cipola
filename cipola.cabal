@@ -54,6 +54,7 @@ library
                        PrimeVector
                        SquareRing
                        ToInteger
+                       Util
 
   -- Modules included in this library but not exported.
   other-modules:       Cipola
@@ -61,7 +62,6 @@ library
                        Modulo.Internal
                        Pow2
                        Prime.Internal
-                       Util
 
   -- LANGUAGE extensions used by modules in this package.
   -- other-extensions:
