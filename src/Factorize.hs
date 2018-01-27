@@ -9,6 +9,7 @@ module Factorize
 
 import Control.Applicative ((<|>))
 import Control.Monad (void)
+import Control.Parallel.Strategies (parBuffer, rdeepseq, using)
 import Data.Bifunctor (first)
 import Data.Maybe (fromJust)
 import Data.Proxy (Proxy)
@@ -49,7 +50,11 @@ findAFactor n
   | even n = 2
   | otherwise = reify (Modulo n) $ \(_ :: Proxy s) ->
       fromJust $
-      firstJust [tryPOC base p | p <- randomPoints :: [EPOC s]]
+      firstJust
+      (
+        [tryPOC base p | p <- randomPoints :: [EPOC s]]
+        `using` parBuffer 100 rdeepseq
+      )
   where
     base = pickBase n
 
