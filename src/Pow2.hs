@@ -2,7 +2,7 @@ module Pow2
     ( rootOddPow2
     ) where
 
-import           Util (sqr)
+import Util (sqr)
 
 rootOddPow2 :: Integer -> Int -> [Integer]
 rootOddPow2 a = go

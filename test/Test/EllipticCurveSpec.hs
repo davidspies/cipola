@@ -1,26 +1,26 @@
-{-# LANGUAGE FlexibleContexts    #-}
-{-# LANGUAGE NamedFieldPuns      #-}
-{-# LANGUAGE Rank2Types          #-}
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE NamedFieldPuns #-}
+{-# LANGUAGE Rank2Types #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
 module Test.EllipticCurveSpec
     ( spec
     ) where
 
-import           Control.Monad    (void)
-import           Data.Either      (isLeft, isRight)
-import           Data.Maybe       (fromMaybe)
-import           Data.Proxy       (Proxy)
-import           Data.Reflection  (Reifies, reify)
-import           EllipticCurve
-import           Modulo           (E, Modulo (Modulo), modulo)
-import           Prelude          hiding (toInteger)
-import           Prime            (Prime)
-import           Test.Hspec
-import           Test.Modulo.Util ()
-import           Test.Prime.Util  ()
-import           Test.QuickCheck
-import           ToInteger        (toInteger)
+import Control.Monad (void)
+import Data.Either (isLeft, isRight)
+import Data.Maybe (fromMaybe)
+import Data.Proxy (Proxy)
+import Data.Reflection (Reifies, reify)
+import EllipticCurve
+import Modulo (E, Modulo (Modulo), modulo)
+import Prelude hiding (toInteger)
+import Prime (Prime)
+import Test.Hspec
+import Test.Modulo.Util ()
+import Test.Prime.Util ()
+import Test.QuickCheck
+import ToInteger (toInteger)
 
 curveTest :: Testable u
   => (Integer -> u)

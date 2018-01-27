@@ -1,12 +1,12 @@
 {-# LANGUAGE ExistentialQuantification #-}
-{-# LANGUAGE FlexibleContexts          #-}
-{-# LANGUAGE FlexibleInstances         #-}
-{-# LANGUAGE LambdaCase                #-}
-{-# LANGUAGE MultiWayIf                #-}
-{-# LANGUAGE NamedFieldPuns            #-}
-{-# LANGUAGE Rank2Types                #-}
-{-# LANGUAGE StandaloneDeriving        #-}
-{-# LANGUAGE UndecidableInstances      #-}
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE MultiWayIf #-}
+{-# LANGUAGE NamedFieldPuns #-}
+{-# LANGUAGE Rank2Types #-}
+{-# LANGUAGE StandaloneDeriving #-}
+{-# LANGUAGE UndecidableInstances #-}
 
 module EllipticCurve
   ( EC(Zero)
@@ -26,15 +26,15 @@ module EllipticCurve
   , randomPoints
   ) where
 
-import           Control.Monad   (join)
-import           Data.Maybe      (isJust)
-import           Data.Reflection (Reifies, reflect, reify)
-import           Modulo
-import           Prelude         hiding (negate, toInteger)
+import Control.Monad (join)
+import Data.Maybe (isJust)
+import Data.Reflection (Reifies, reflect, reify)
+import Modulo
+import Prelude hiding (negate, toInteger)
 import qualified Prelude
-import           System.Random   (Random (..), mkStdGen)
-import           ToInteger       (toInteger)
-import           Util            (sqr)
+import System.Random (Random (..), mkStdGen)
+import ToInteger (toInteger)
+import Util (sqr)
 
 data EllipticCurve s = EllipticCurve {a :: E s, b :: E s}
   deriving (Show)

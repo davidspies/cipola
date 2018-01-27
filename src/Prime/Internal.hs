@@ -1,6 +1,6 @@
 module Prime.Internal where
 
-import           ToInteger (ToInteger (..))
+import ToInteger (ToInteger (..))
 
 newtype Prime = Prime Integer
   deriving (Eq, Ord, Show)

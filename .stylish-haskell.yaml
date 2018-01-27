@@ -39,7 +39,7 @@ steps:
       # - none: Do not perform any alignment.
       #
       # Default: global.
-      align: global
+      align: none
 
       # The following options affect only import list alignment.
       #
@@ -104,7 +104,7 @@ steps:
       #   >     )
       #
       # Default: inline
-      long_list_align: inline
+      long_list_align: new_line_multiline
 
       # Align empty list (importing instances)
       #
@@ -183,7 +183,7 @@ steps:
       #   between actual import and closing bracket.
       #
       # Default: true
-      align: true
+      align: false
 
       # stylish-haskell can detect redundancy of some language pragmas. If this
       # is set to true, it will remove those redundant pragmas. Default: true.

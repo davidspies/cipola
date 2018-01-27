@@ -1,5 +1,5 @@
-{-# LANGUAGE BangPatterns         #-}
-{-# LANGUAGE FlexibleInstances    #-}
+{-# LANGUAGE BangPatterns #-}
+{-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE TypeSynonymInstances #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
@@ -13,16 +13,16 @@ module Prime
     , primePowers
     ) where
 
-import           Data.List       (find)
-import           Data.Maybe      (fromMaybe)
-import           Data.Reflection (reify)
-import           Modulo          (Modulo (Modulo), modulo)
-import           Prelude         hiding (toInteger)
-import           Prime.Internal
-import           Prime.Sieve     (fmergeAll)
-import qualified Prime.Sieve     as Sieve
-import           ToInteger       (ToInteger (..))
-import           Util            (Parity (..), parity, sqr)
+import Data.List (find)
+import Data.Maybe (fromMaybe)
+import Data.Reflection (reify)
+import Modulo (Modulo (Modulo), modulo)
+import Prelude hiding (toInteger)
+import Prime.Internal
+import Prime.Sieve (fmergeAll)
+import qualified Prime.Sieve as Sieve
+import ToInteger (ToInteger (..))
+import Util (Parity (..), parity, sqr)
 
 type PrimePow = (Prime, Int)
 

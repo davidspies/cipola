@@ -1,24 +1,23 @@
-{-# LANGUAGE FlexibleContexts    #-}
-{-# LANGUAGE LambdaCase          #-}
-{-# LANGUAGE Rank2Types          #-}
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE Rank2Types #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
 module Factorize
     ( factorize
     ) where
 
-import           Control.Applicative ((<|>))
-import           Control.Monad       (void)
-import           Data.Bifunctor      (first)
-import           Data.Maybe          (fromJust)
-import           Data.Proxy          (Proxy)
-import           Data.Reflection     (Reifies, reify)
-import           EllipticCurve       (EPOC, PointOnCurve (..), randomPoints,
-                                      (|*|))
-import           Modulo              (Modulo (Modulo))
-import           Prelude             hiding (toInteger)
-import           Prime               (Prime, mkPrime, primePowers)
-import           ToInteger           (toInteger)
+import Control.Applicative ((<|>))
+import Control.Monad (void)
+import Data.Bifunctor (first)
+import Data.Maybe (fromJust)
+import Data.Proxy (Proxy)
+import Data.Reflection (Reifies, reify)
+import EllipticCurve (EPOC, PointOnCurve (..), randomPoints, (|*|))
+import Modulo (Modulo (Modulo))
+import Prelude hiding (toInteger)
+import Prime (Prime, mkPrime, primePowers)
+import ToInteger (toInteger)
 
 pickBase :: Integer -> [Integer]
 pickBase n =

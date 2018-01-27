@@ -1,16 +1,16 @@
 {-# LANGUAGE PatternSynonyms #-}
-{-# LANGUAGE Rank2Types      #-}
-{-# LANGUAGE TypeOperators   #-}
+{-# LANGUAGE Rank2Types #-}
+{-# LANGUAGE TypeOperators #-}
 
 module Test.ModuloSpec(spec) where
 
-import           Data.List       (foldl', inits, tails)
-import           Data.Reflection (reify)
-import           Modulo
-import           Prelude         hiding (toInteger)
-import           Test.Hspec
-import           Test.QuickCheck
-import           ToInteger       (toInteger)
+import Data.List (foldl', inits, tails)
+import Data.Reflection (reify)
+import Modulo
+import Prelude hiding (toInteger)
+import Test.Hspec
+import Test.QuickCheck
+import ToInteger (toInteger)
 
 spec :: Spec
 spec = do

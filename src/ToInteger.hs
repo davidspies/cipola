@@ -2,7 +2,7 @@ module ToInteger
     ( ToInteger(..)
     ) where
 
-import           Prelude as P
+import Prelude as P
 
 class ToInteger n where
   toInteger :: n -> Integer

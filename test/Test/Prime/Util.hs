@@ -2,12 +2,12 @@
 
 module Test.Prime.Util() where
 
-import           Control.DeepSeq (NFData (..))
-import           Data.Maybe      (fromMaybe)
-import           Prelude         hiding (toInteger)
-import           Prime
-import           Test.QuickCheck
-import           ToInteger       (toInteger)
+import Control.DeepSeq (NFData (..))
+import Data.Maybe (fromMaybe)
+import Prelude hiding (toInteger)
+import Prime
+import Test.QuickCheck
+import ToInteger (toInteger)
 
 instance Arbitrary Prime where
   arbitrary = do

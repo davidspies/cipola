@@ -4,14 +4,14 @@ module Lib
     ( modRoot
     ) where
 
-import           Data.Bifunctor (second)
-import           Data.Maybe     (fromJust)
-import           Lift           (rootPrimePow)
-import           Modulo         (crt)
-import           Prelude        hiding (toInteger)
-import           Prime          (PrimePow)
-import           PrimeVector    (PrimeVector, fromPrimes, primeDecomposition)
-import           ToInteger      (toInteger)
+import Data.Bifunctor (second)
+import Data.Maybe (fromJust)
+import Lift (rootPrimePow)
+import Modulo (crt)
+import Prelude hiding (toInteger)
+import Prime (PrimePow)
+import PrimeVector (PrimeVector, fromPrimes, primeDecomposition)
+import ToInteger (toInteger)
 
 modRoot :: Integer -> PrimeVector -> ([Integer], PrimeVector)
 modRoot a pv0 = (

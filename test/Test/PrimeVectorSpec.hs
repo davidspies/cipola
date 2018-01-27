@@ -6,11 +6,11 @@ module Test.PrimeVectorSpec
     , spec
     ) where
 
-import           Prelude         hiding (toInteger)
-import           Prime           (Prime, nearestPrime)
-import           PrimeVector
-import           Test.Hspec
-import           Test.QuickCheck
+import Prelude hiding (toInteger)
+import Prime (Prime, nearestPrime)
+import PrimeVector
+import Test.Hspec
+import Test.QuickCheck
 
 spec :: Spec
 spec = describe "PrimeVector" $ do

@@ -4,11 +4,11 @@ module Test.PrimeVector.Util
     ( LargePrimeVector(..)
     ) where
 
-import           Control.DeepSeq (NFData (..))
-import           Data.Bifunctor  (second)
-import           PrimeVector
-import           Test.Prime.Util ()
-import           Test.QuickCheck
+import Control.DeepSeq (NFData (..))
+import Data.Bifunctor (second)
+import PrimeVector
+import Test.Prime.Util ()
+import Test.QuickCheck
 
 instance Arbitrary PrimeVector where
   arbitrary = fromInteger <$> arbitrary

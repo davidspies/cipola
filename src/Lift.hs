@@ -1,14 +1,14 @@
 module Lift(rootPrimePow) where
 
-import           Cipola          (cipola)
-import           Data.Foldable   (foldl')
-import           Data.Reflection (reify)
-import           Modulo          (Modulo (Modulo), inv, modulo)
-import           Pow2            (rootOddPow2)
-import           Prelude         hiding (toInteger)
-import           Prime           (PrimePow)
-import           ToInteger       (toInteger)
-import           Util            (sqr)
+import Cipola (cipola)
+import Data.Foldable (foldl')
+import Data.Reflection (reify)
+import Modulo (Modulo (Modulo), inv, modulo)
+import Pow2 (rootOddPow2)
+import Prelude hiding (toInteger)
+import Prime (PrimePow)
+import ToInteger (toInteger)
+import Util (sqr)
 
 liftSol :: PrimePow -> Integer -> Integer -> Integer
 liftSol (prime, curPow) val sol = mult * (prime' ^ curPow) + sol

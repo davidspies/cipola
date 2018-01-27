@@ -1,11 +1,11 @@
-{-# LANGUAGE FlexibleContexts     #-}
-{-# LANGUAGE ScopedTypeVariables  #-}
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE UndecidableInstances #-}
 
 module SquareRing where
 
-import           Data.Reflection (Reifies, reflect)
-import           Modulo
+import Data.Reflection (Reifies, reflect)
+import Modulo
 
 newtype SquareRing s = SquareRing {tsqr :: E s}
 data Sq s t = Sq !(E s) !(E s)

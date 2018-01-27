@@ -4,11 +4,11 @@ module Test.PrimeSpec
     ( spec
     ) where
 
-import           Prelude         hiding (toInteger)
-import           Prime
-import           Test.Hspec
-import           Test.QuickCheck
-import           ToInteger       (toInteger)
+import Prelude hiding (toInteger)
+import Prime
+import Test.Hspec
+import Test.QuickCheck
+import ToInteger (toInteger)
 
 spec :: Spec
 spec = do

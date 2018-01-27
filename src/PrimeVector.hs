@@ -1,4 +1,4 @@
-{-# LANGUAGE LambdaCase          #-}
+{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
 module PrimeVector
@@ -9,11 +9,11 @@ module PrimeVector
     , toInteger
     ) where
 
-import           Data.List (group, sort)
-import           Factorize (factorize)
-import           Prelude   hiding (toInteger)
-import           Prime     (Prime, PrimePow)
-import           ToInteger (ToInteger (..))
+import Data.List (group, sort)
+import Factorize (factorize)
+import Prelude hiding (toInteger)
+import Prime (Prime, PrimePow)
+import ToInteger (ToInteger (..))
 
 newtype PrimeVector = PrimeVector [PrimePow]
   deriving (Eq)

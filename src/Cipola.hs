@@ -1,20 +1,20 @@
 {-# LANGUAGE FlexibleContexts #-}
-{-# LANGUAGE NamedFieldPuns   #-}
+{-# LANGUAGE NamedFieldPuns #-}
 
 module Cipola
     ( cipola
     ) where
 
-import           Data.List       (find, sortOn)
-import           Data.Maybe      (fromJust)
-import           Data.Reflection (Reifies, reify)
-import           Modulo          (E, Modulo (Modulo), modulo, modulusOf)
-import           Prelude         hiding (toInteger)
-import           Prime           (Prime)
-import           SquareRing
-import           System.Random   (mkStdGen, randomRs)
-import           ToInteger       (toInteger)
-import           Util            (Parity (..), parity, sqr, withPhantom)
+import Data.List (find, sortOn)
+import Data.Maybe (fromJust)
+import Data.Reflection (Reifies, reify)
+import Modulo (E, Modulo (Modulo), modulo, modulusOf)
+import Prelude hiding (toInteger)
+import Prime (Prime)
+import SquareRing
+import System.Random (mkStdGen, randomRs)
+import ToInteger (toInteger)
+import Util (Parity (..), parity, sqr, withPhantom)
 
 jacobi :: Integer -> Integer -> Integer
 jacobi a b

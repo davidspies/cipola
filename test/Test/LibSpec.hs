@@ -2,16 +2,16 @@
 
 module Test.LibSpec(spec) where
 
-import           Control.Monad         (when)
-import           Data.List             (sort)
-import           Lib
-import           Prelude               hiding (toInteger)
-import           PrimeVector           (primeDecomposition)
-import           Test.Hspec
-import           Test.PrimeVector.Util
-import           Test.QuickCheck
-import           ToInteger             (toInteger)
-import           Util                  (sqr)
+import Control.Monad (when)
+import Data.List (sort)
+import Lib
+import Prelude hiding (toInteger)
+import PrimeVector (primeDecomposition)
+import Test.Hspec
+import Test.PrimeVector.Util
+import Test.QuickCheck
+import ToInteger (toInteger)
+import Util (sqr)
 
 spec :: Spec
 spec = describe "modRoot" $ do

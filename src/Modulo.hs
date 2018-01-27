@@ -1,6 +1,6 @@
-{-# LANGUAGE FlexibleContexts     #-}
-{-# LANGUAGE LambdaCase           #-}
-{-# LANGUAGE ScopedTypeVariables  #-}
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE UndecidableInstances #-}
 
 module Modulo
@@ -10,11 +10,11 @@ module Modulo
     , tryInv
     ) where
 
-import           Data.Foldable   (foldl')
-import           Data.Reflection (Reifies (..))
-import           Modulo.Internal as X
-import           Prelude         hiding (toInteger)
-import           ToInteger       (toInteger)
+import Data.Foldable (foldl')
+import Data.Reflection (Reifies (..))
+import Modulo.Internal as X
+import Prelude hiding (toInteger)
+import ToInteger (toInteger)
 
 inv :: Reifies s Modulo => E s -> E s
 inv a = case inv' a' n of
