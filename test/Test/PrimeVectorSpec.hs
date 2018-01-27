@@ -2,11 +2,12 @@
 
 module Test.PrimeVectorSpec
     ( factorizeStressTest
+    , factorizeStressTestInputs
     , spec
     ) where
 
 import           Prelude         hiding (toInteger)
-import           Prime           (nearestPrime)
+import           Prime           (Prime, nearestPrime)
 import           PrimeVector
 import           Test.Hspec
 import           Test.QuickCheck
@@ -35,10 +36,15 @@ spec = describe "PrimeVector" $ do
   describe "Factorize" $
     it "should easily handle ~80-bit numbers" $ factorizeStressTest 40
 
-factorizeStressTest :: Int -> Property
-factorizeStressTest factorBits = once $ property $ do
+factorizeStressTestInputs :: Int -> Gen (Prime, Prime)
+factorizeStressTestInputs factorBits = do
   let getPrime = nearestPrime <$> choose (2 ^ factorBits, 2 ^ (factorBits + 1))
   x <- getPrime
   y <- getPrime
+  return (x, y)
+
+factorizeStressTest :: Int -> Property
+factorizeStressTest factorBits = once $ property $ do
+  (x, y) <- factorizeStressTestInputs factorBits
   let n = fromUnsortedPrimeList [x, y]
   return $ factorize (toInteger n) === n
