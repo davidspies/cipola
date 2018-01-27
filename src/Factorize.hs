@@ -4,7 +4,7 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 
 module Factorize
-    ( findAFactor
+    ( factorize
     ) where
 
 import           Control.Applicative ((<|>))
@@ -17,7 +17,7 @@ import           EllipticCurve       (EPOC, PointOnCurve (..), randomPoints,
                                       (|*|))
 import           Modulo              (Modulo (Modulo))
 import           Prelude             hiding (toInteger)
-import           Prime               (primePowers)
+import           Prime               (Prime, mkPrime, primePowers)
 import           ToInteger           (toInteger)
 
 pickBase :: Integer -> [Integer]
@@ -53,3 +53,11 @@ findAFactor n
       firstJust [tryPOC base p | p <- randomPoints :: [EPOC s]]
   where
     base = pickBase n
+
+factorize :: Integer -> [Prime]
+factorize n = case compare n 1 of
+  LT -> error "Must be positive"
+  EQ -> []
+  GT -> case mkPrime n of
+    Just p  -> [p]
+    Nothing -> let k = findAFactor n in factorize k ++ factorize (n `quot` k)

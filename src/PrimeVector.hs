@@ -3,7 +3,6 @@
 
 module PrimeVector
     ( PrimeVector
-    , factorize
     , fromPrimes
     , fromUnsortedPrimeList
     , primeDecomposition
@@ -11,9 +10,9 @@ module PrimeVector
     ) where
 
 import           Data.List (group, sort)
-import           Factorize (findAFactor)
+import           Factorize (factorize)
 import           Prelude   hiding (toInteger)
-import           Prime     (Prime, PrimePow, mkPrime)
+import           Prime     (Prime, PrimePow)
 import           ToInteger (ToInteger (..))
 
 newtype PrimeVector = PrimeVector [PrimePow]
@@ -33,7 +32,7 @@ instance Num PrimeVector where
   (-) x y = fromInteger (toInteger x - toInteger y)
   abs = id
   signum = const 1
-  fromInteger = factorize
+  fromInteger = fromUnsortedPrimeList . factorize
 
 instance Show PrimeVector where
   show pv = show $ toInteger pv
@@ -59,11 +58,3 @@ fromUnsortedPrimeList ps = fromPrimes $ map primeGroup $ group $ sort ps
     primeGroup = \case
       [] -> error "unreachable"
       pg@(p : _) -> (p, length pg)
-
-factorize :: Integer -> PrimeVector
-factorize n = case compare n 1 of
-  LT -> error "Must be positive"
-  EQ -> fromPrimes []
-  GT -> case mkPrime n of
-    Just p  -> fromUnsortedPrimeList [p]
-    Nothing -> let k = findAFactor n in factorize k * factorize (n `quot` k)

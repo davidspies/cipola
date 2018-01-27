@@ -33,7 +33,7 @@ spec = describe "PrimeVector" $ do
   describe "Show instance" $
     it "should show correctly" $ property $ \(Positive x) ->
       show (fromInteger x :: PrimeVector) === show x
-  describe "Factorize" $
+  describe "fromInteger" $
     it "should easily handle ~80-bit numbers" $ factorizeStressTest 40
 
 factorizeStressTestInputs :: Int -> Gen (Prime, Prime)
@@ -47,4 +47,4 @@ factorizeStressTest :: Int -> Property
 factorizeStressTest factorBits = once $ property $ do
   (x, y) <- factorizeStressTestInputs factorBits
   let n = fromUnsortedPrimeList [x, y]
-  return $ factorize (toInteger n) === n
+  return $ fromInteger (toInteger n) === n

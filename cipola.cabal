@@ -49,6 +49,7 @@ cabal-version:       >=1.10
 library
   -- Modules exported by the library.
   exposed-modules:     EllipticCurve
+                       Factorize
                        Lib
                        Modulo
                        Prime
@@ -60,7 +61,6 @@ library
 
   -- Modules included in this library but not exported.
   other-modules:       Cipola
-                       Factorize
                        Lift
                        Modulo.Internal
                        Pow2
