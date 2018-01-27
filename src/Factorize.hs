@@ -8,13 +8,13 @@ module Factorize
     ) where
 
 import Control.Applicative ((<|>))
-import Control.Monad (void)
+import Control.Monad (foldM, void)
 import Control.Parallel.Strategies (parBuffer, rdeepseq, using)
 import Data.Bifunctor (first)
 import Data.Maybe (fromJust)
 import Data.Proxy (Proxy)
 import Data.Reflection (Reifies, reify)
-import EllipticCurve (EPOC, PointOnCurve (..), randomPoints, (|*|))
+import EllipticCurve (EPOC, PointOnCurve (..), randomPoints, (|*?|))
 import Modulo (Modulo (Modulo))
 import Prelude hiding (toInteger)
 import Prime (Prime, mkPrime, primePowers)
@@ -40,7 +40,7 @@ maybeLeft = \case
 tryPOC :: Reifies s Modulo => [Integer] -> EPOC s -> Maybe Integer
 tryPOC base pa = maybeLeft $ do
   (PointOnCurve p) <- pa
-  void $ foldl (flip (|*|)) (Right p) base
+  void $ foldM (flip (|*?|)) p base
 
 firstJust :: [Maybe a] -> Maybe a
 firstJust = foldr (<|>) Nothing

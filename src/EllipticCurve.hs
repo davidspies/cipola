@@ -36,11 +36,11 @@ import System.Random (Random (..), mkStdGen)
 import ToInteger (toInteger)
 import Util (sqr)
 
-data EllipticCurve s = EllipticCurve {a :: E s, b :: E s}
+data EllipticCurve s = EllipticCurve {a :: !(E s), b :: !(E s)}
   deriving (Show)
 deriving instance Reifies s Modulo => Eq (EllipticCurve s)
 
-data EC s t = Zero | EC{x :: E s, y :: E s}
+data EC s t = Zero | EC{x :: !(E s), y :: !(E s)}
   deriving (Show)
 deriving instance (Reifies s Modulo) => Eq (EC s t)
 
