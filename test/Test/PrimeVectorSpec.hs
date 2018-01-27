@@ -1,7 +1,8 @@
 {-# LANGUAGE Rank2Types #-}
 
 module Test.PrimeVectorSpec
-    ( spec
+    ( factorizeStressTest
+    , spec
     ) where
 
 import           Prelude         hiding (toInteger)
@@ -32,8 +33,12 @@ spec = describe "PrimeVector" $ do
     it "should show correctly" $ property $ \(Positive x) ->
       show (fromInteger x :: PrimeVector) === show x
   describe "Factorize" $
-    it "should easily handle ~80-bit numbers" $ once $ property $ do
-      x <- nearestPrime <$> choose (2 ^ (40 :: Int), 2 ^ (41 :: Int))
-      y <- nearestPrime <$> choose (2 ^ (40 :: Int), 2 ^ (41 :: Int))
-      let n = fromUnsortedPrimeList [x, y]
-      return $ factorize (toInteger n) === n
+    it "should easily handle ~80-bit numbers" $ factorizeStressTest 40
+
+factorizeStressTest :: Int -> Property
+factorizeStressTest factorBits = once $ property $ do
+  let getPrime = nearestPrime <$> choose (2 ^ factorBits, 2 ^ (factorBits + 1))
+  x <- getPrime
+  y <- getPrime
+  let n = fromUnsortedPrimeList [x, y]
+  return $ factorize (toInteger n) === n
