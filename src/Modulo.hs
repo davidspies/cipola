@@ -7,6 +7,7 @@ module Modulo
     ( module X
     , crt
     , inv
+    , tryInv
     ) where
 
 import           Data.Foldable   (foldl')
@@ -16,11 +17,21 @@ import           Prelude         hiding (toInteger)
 import           ToInteger       (toInteger)
 
 inv :: Reifies s Modulo => E s -> E s
-inv a = fromInteger $ inv' (toInteger a) (modulusOf a)
+inv a = case inv' a' n of
+  Left g  -> error (show a' ++ " and " ++ show n ++ " share factor " ++ show g)
+  Right v -> fromInteger v
+  where
+    a' = toInteger a
+    n = modulusOf a
 
-inv' :: Integer -> Integer -> Integer
+tryInv :: Reifies s Modulo => E s -> Either Integer (E s)
+tryInv a = fromInteger <$> inv' (toInteger a) (modulusOf a)
+
+inv' :: Integer -> Integer -> Either Integer Integer
 inv' a b = let (x, _, g) = euclidean a b in
-  if abs g == 1 then x * g else error (show a ++ " and " ++ show b ++ " not relatively prime")
+  if abs g == 1
+    then Right (x * g)
+    else Left g
 
 -- \a b -> let (x,y,g) = euclidean a b in abs g === gcd a b .&&. x * a + y * b === g
 -- \a b -> abs a > 1 ==> let (_,y,_) = euclidean a b in abs y < abs a

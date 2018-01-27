@@ -52,6 +52,7 @@ library
                        Lib
                        Modulo
                        Prime
+                       Prime.Sieve
                        PrimeVector
                        SquareRing
                        ToInteger
@@ -59,6 +60,7 @@ library
 
   -- Modules included in this library but not exported.
   other-modules:       Cipola
+                       Factorize
                        Lift
                        Modulo.Internal
                        Pow2

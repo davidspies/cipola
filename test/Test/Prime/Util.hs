@@ -3,7 +3,7 @@
 module Test.Prime.Util() where
 
 import           Control.DeepSeq (NFData (..))
-import           Data.Maybe      (fromMaybe, maybeToList)
+import           Data.Maybe      (fromMaybe)
 import           Prelude         hiding (toInteger)
 import           Prime
 import           Test.QuickCheck
@@ -18,7 +18,6 @@ instance Arbitrary Prime where
       Nothing  -> return up
       Just dp' -> return $
         if toInteger up - n < n - toInteger dp' then up else dp'
-  shrink p = maybeToList $ downPrime (toInteger p - 1)
 
 instance NFData Prime where
   rnf = rnf . toInteger

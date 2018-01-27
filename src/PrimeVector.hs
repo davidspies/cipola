@@ -1,18 +1,20 @@
-{-# LANGUAGE BangPatterns        #-}
+{-# LANGUAGE LambdaCase          #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
 module PrimeVector
     ( PrimeVector
+    , factorize
     , fromPrimes
+    , fromUnsortedPrimeList
     , primeDecomposition
     , toInteger
     ) where
 
-import           Prelude        hiding (toInteger)
-import           Prime          (PrimePow)
-import           Prime.Internal (Prime (Prime))
-import           ToInteger      (ToInteger (..))
-import           Util           (sqr)
+import           Data.List (group, sort)
+import           Factorize (findAFactor)
+import           Prelude   hiding (toInteger)
+import           Prime     (Prime, PrimePow, mkPrime)
+import           ToInteger (ToInteger (..))
 
 newtype PrimeVector = PrimeVector [PrimePow]
   deriving (Eq)
@@ -31,27 +33,10 @@ instance Num PrimeVector where
   (-) x y = fromInteger (toInteger x - toInteger y)
   abs = id
   signum = const 1
-  -- TODO Pollard Rho or Elliptic Curve factorization
-  fromInteger n0
-    | n0 <= 0 = error "Positive only"
-    | otherwise = PrimeVector $ go 2 n0
-    where
-      go _ 1 = []
-      go f n | sqr f > n = [(Prime n, 1)]
-      go f n = let (k, leftover) = f `multiplicityIn` n in
-        (if k > 0 then ((Prime f, k) :) else id) $ go (f + 1) leftover
+  fromInteger = factorize
 
 instance Show PrimeVector where
   show pv = show $ toInteger pv
-
-multiplicityIn :: Integer -> Integer -> (Int, Integer)
-multiplicityIn f = go 0
-  where
-    go !accum n
-      | r == 0 = go (accum + 1) q
-      | otherwise = (accum, n)
-      where
-        (q, r) = n `quotRem` f
 
 primeDecomposition :: PrimeVector -> [PrimePow]
 primeDecomposition (PrimeVector fs) = fs
@@ -67,3 +52,18 @@ fromPrimes xs0 = validate xs0 `seq` PrimeVector xs0
     validate ((p0, _) : (p1, _) : _) | toInteger p1 < toInteger p0 =
       error "Terms out of order"
     validate ((_, _) : xs) = validate xs
+
+fromUnsortedPrimeList :: [Prime] -> PrimeVector
+fromUnsortedPrimeList ps = fromPrimes $ map primeGroup $ group $ sort ps
+  where
+    primeGroup = \case
+      [] -> error "unreachable"
+      pg@(p : _) -> (p, length pg)
+
+factorize :: Integer -> PrimeVector
+factorize n = case compare n 1 of
+  LT -> error "Must be positive"
+  EQ -> fromPrimes []
+  GT -> case mkPrime n of
+    Just p  -> fromUnsortedPrimeList [p]
+    Nothing -> let k = findAFactor n in factorize k * factorize (n `quot` k)

@@ -8,13 +8,19 @@ module Prime
     , PrimePow
     , isPrime
     , mkPrime
+    , nearestPrime
+    , primes
+    , primePowers
     ) where
 
 import           Data.List       (find)
+import           Data.Maybe      (fromMaybe)
 import           Data.Reflection (reify)
 import           Modulo          (Modulo (Modulo), modulo)
 import           Prelude         hiding (toInteger)
 import           Prime.Internal
+import           Prime.Sieve     (fmergeAll)
+import qualified Prime.Sieve     as Sieve
 import           ToInteger       (ToInteger (..))
 import           Util            (Parity (..), parity, sqr)
 
@@ -59,3 +65,35 @@ ceillog2 n0
 
 instance ToInteger PrimePow where
   toInteger (p, k) = toInteger p ^ k
+
+primes :: [Prime]
+primes = map Prime Sieve.primes
+
+newtype PP = PP {upp :: PrimePow}
+  deriving (Eq)
+
+instance Ord PP where
+  compare x y = compare (toInteger $ upp x) (toInteger $ upp y)
+
+primePowers :: [PrimePow]
+primePowers = map upp $ fmergeAll [[PP (p, i) | i <- [1..]] | p <- primes]
+
+downPrime :: Integer -> Maybe Prime
+downPrime n
+  | n <= 1 = Nothing
+  | otherwise = case mkPrime n of
+      Nothing -> downPrime (n - 1)
+      Just p  -> Just p
+
+upPrime :: Integer -> Prime
+upPrime n
+  | n <= 1 = upPrime 2
+  | otherwise = fromMaybe (upPrime (n + 1)) (mkPrime n)
+
+nearestPrime :: Integer -> Prime
+nearestPrime n = case dp of
+    Nothing  -> up
+    Just dp' -> if toInteger up - n < n - toInteger dp' then up else dp'
+  where
+    dp = downPrime n
+    up = upPrime n

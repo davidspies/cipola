@@ -9,8 +9,11 @@ module Modulo.Internal
     , modulusOf
     ) where
 
+import           Data.Bifunctor  (first)
 import           Data.Proxy      (Proxy (Proxy))
 import           Data.Reflection (Reifies (..))
+import           Prelude         hiding (toInteger)
+import           System.Random   (Random (..))
 import           ToInteger       (ToInteger (..))
 
 newtype Modulo = Modulo {modulus :: Integer}
@@ -31,6 +34,16 @@ instance Reifies s Modulo => Num (E s) where
 
 instance ToInteger (E s) where
   toInteger (E n) = n
+
+instance Reifies s Modulo => Random (E s) where
+  randomR (lo, hi) = first fromInteger . randomR (lo', uhi)
+    where
+      lo' = toInteger lo
+      hi' = toInteger hi
+      uhi
+        | hi' < lo' = hi' + modulusOf lo
+        | otherwise = hi'
+  random = randomR (0, -1)
 
 modulo :: Reifies s Modulo => Integer -> proxy s -> E s
 modulo n _ = fromInteger n

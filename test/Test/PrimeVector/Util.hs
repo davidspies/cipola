@@ -1,4 +1,3 @@
-{-# LANGUAGE LambdaCase #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
 module Test.PrimeVector.Util
@@ -7,8 +6,6 @@ module Test.PrimeVector.Util
 
 import           Control.DeepSeq (NFData (..))
 import           Data.Bifunctor  (second)
-import           Data.List       (group, sort)
-import           Prime           (Prime)
 import           PrimeVector
 import           Test.Prime.Util ()
 import           Test.QuickCheck
@@ -25,13 +22,6 @@ instance NFData PrimeVector where
 
 newtype LargePrimeVector = LargePrimeVector PrimeVector
   deriving (Show)
-
-fromUnsortedPrimeList :: [Prime] -> PrimeVector
-fromUnsortedPrimeList ps = fromPrimes $ map primeGroup $ group $ sort ps
-  where
-    primeGroup = \case
-      [] -> error "unreachable"
-      pg@(p : _) -> (p, length pg)
 
 instance Arbitrary LargePrimeVector where
   arbitrary = LargePrimeVector . fromUnsortedPrimeList <$> arbitrary

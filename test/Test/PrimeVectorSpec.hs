@@ -5,6 +5,7 @@ module Test.PrimeVectorSpec
     ) where
 
 import           Prelude         hiding (toInteger)
+import           Prime           (nearestPrime)
 import           PrimeVector
 import           Test.Hspec
 import           Test.QuickCheck
@@ -30,3 +31,9 @@ spec = describe "PrimeVector" $ do
   describe "Show instance" $
     it "should show correctly" $ property $ \(Positive x) ->
       show (fromInteger x :: PrimeVector) === show x
+  describe "Factorize" $
+    it "should easily handle ~80-bit numbers" $ once $ property $ do
+      x <- nearestPrime <$> choose (2 ^ (40 :: Int), 2 ^ (41 :: Int))
+      y <- nearestPrime <$> choose (2 ^ (40 :: Int), 2 ^ (41 :: Int))
+      let n = fromUnsortedPrimeList [x, y]
+      return $ factorize (toInteger n) === n
