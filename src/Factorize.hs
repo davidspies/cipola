@@ -10,8 +10,9 @@ module Factorize
 import Control.Applicative ((<|>))
 import Control.Monad (foldM, void)
 import Control.Parallel.Strategies (parBuffer, rdeepseq, using)
-import Data.Bifunctor (first)
+import qualified Data.DList as DList
 import Data.Maybe (fromJust)
+import Data.Monoid ((<>))
 import Data.Proxy (Proxy)
 import Data.Reflection (Reifies, reify)
 import EllipticCurve (EPOC, PointOnCurve (..), randomPoints, (|*?|))
@@ -22,8 +23,7 @@ import ToInteger (toInteger)
 
 pickBase :: Integer -> [Integer]
 pickBase n =
-    map fst $ takeWhile (\(x, u) -> x ^ u < m) $
-      map (first toInteger) primePowers
+    map (toInteger . fst) $ takeWhile ((< m) . toInteger) primePowers
   where
     p :: Double
     p = sqrt (fromInteger n)
@@ -59,9 +59,11 @@ findAFactor n
     base = pickBase n
 
 factorize :: Integer -> [Prime]
-factorize n = case compare n 1 of
-  LT -> error "Must be positive"
-  EQ -> []
-  GT -> case mkPrime n of
-    Just p  -> [p]
-    Nothing -> let k = findAFactor n in factorize k ++ factorize (n `quot` k)
+factorize = DList.toList . go
+  where
+    go n = case compare n 1 of
+      LT -> error "Must be positive"
+      EQ -> DList.empty
+      GT -> case mkPrime n of
+        Just p  -> DList.singleton p
+        Nothing -> let k = findAFactor n in go k <> go (n `quot` k)

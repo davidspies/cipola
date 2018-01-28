@@ -1,4 +1,5 @@
 {-# LANGUAGE TupleSections #-}
+{-# LANGUAGE ViewPatterns #-}
 
 module Lib
     ( modRoot
@@ -16,8 +17,8 @@ import ToInteger (toInteger)
 modRoot :: Integer -> PrimeVector -> ([Integer], PrimeVector)
 modRoot a pv0 = (
     map
-      (fst . fromJust . crt . map (second toInteger))
-      (cartesian [[(x, pp) | x <- xs] | (xs, pp) <- subsols])
+      (fst . fromJust . crt)
+      (cartesian [[(x, pp) | x <- xs] | (xs, toInteger -> pp) <- subsols])
   ,
     fromPrimes $ map snd subsols
   )

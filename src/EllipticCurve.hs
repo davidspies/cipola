@@ -68,14 +68,13 @@ ec _ x y = EC{x, y}
           | xp == xq = (3 * sqr xp + a, 2 * yp)
           | otherwise = (yq - yp, xq - xp)
         EllipticCurve{a} = reflect p
-        computeResult = case tryInv sdenom of
-          Left f -> Left f
-          Right i ->
-            let
-              s = snum * i
-              xr = sqr s - xp - xq
-              yr = yp + s * (xr - xp)
-            in Right $ EC xr (-yr)
+        computeResult = do
+          i <- tryInv sdenom
+          let
+            s = snum * i
+            xr = sqr s - xp - xq
+            yr = yp + s * (xr - xp)
+          return $ EC xr (-yr)
 infixl 6 |+?|
 
 (|+|) :: (Reifies s Modulo, Reifies t (EllipticCurve s))

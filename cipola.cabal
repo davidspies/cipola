@@ -70,7 +70,7 @@ library
   -- other-extensions:
 
   -- Other library packages from which modules are imported.
-  build-depends:       base, parallel, random, reflection
+  build-depends:       base, dlist, parallel, random, reflection
 
   -- Directories containing source files.
   hs-source-dirs:      src
