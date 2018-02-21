@@ -1,0 +1,62 @@
+name:                cipola
+version:             0.1.0.0
+github:              "davidspies/cipola"
+license:             GPL-3
+author:              "David Spies"
+maintainer:          "dnspies@gmail.com"
+copyright:           "2018"
+
+extra-source-files:
+- README.md
+- ChangeLog.md
+
+# Metadata used when publishing your package
+# synopsis:            Short description of your package
+# category:            math
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description:         Please see the README on Github at <https://github.com/davidspies/cipola#readme>
+
+dependencies:
+- base >= 4.7 && < 5
+- dlist
+- parallel
+- random
+- reflection
+
+library:
+  source-dirs: src
+
+  other-modules:
+  - Cipola
+  - Lift
+  - Modulo.Internal
+  - Pow2
+  - Prime.Internal
+
+executables:
+  factorize:
+    main:                Main.hs
+    source-dirs:         factorize
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - cipola
+
+tests:
+  cipola-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - cipola
+    - deepseq
+    - hspec
+    - QuickCheck
