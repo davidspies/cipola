@@ -21,7 +21,7 @@ Note the type of `modRoot`
 modRoot :: Integer -> PrimeVector -> ([Integer], PrimeVector)
 ```
 
-The second argument is a `PrimeVector` (represented internally of a list of prime-exponent pairs) which has a `Num` instance and `Show` instance. This is how you can give the argument as a single decimal number. However, the implicit `fromInteger` call made when you pass the literal expression `123456` does Lenstra Elliptic Curve factorization under the hood. If you already know the factorization of your modulus, you can skip this step up by passing in the prime decomposition yourself:
+The second argument is a `PrimeVector` (represented internally of a list of prime-exponent pairs) which has a `Num` instance and `Show` instance. This is how you can give the argument as a single decimal number. However, the implicit `fromInteger` call made when you pass the literal expression `123456` does Lenstra Elliptic Curve factorization under the hood. If you already know the factorization of your modulus, you can skip this step by passing in the prime decomposition yourself:
 
 ```
 > m = 2847918832900147128347298183112903171823131309 * 3422831979814812123388391922932943548176658773 :: PrimeVector
