@@ -1,8 +1,9 @@
 {-# OPTIONS_GHC -Wno-orphans #-}
 
 module Test.PrimeVector.Util
-    ( LargePrimeVector(..)
-    ) where
+  ( LargePrimeVector (..),
+  )
+where
 
 import Control.DeepSeq (NFData (..))
 import Data.Bifunctor (second)
@@ -13,9 +14,10 @@ import Test.QuickCheck
 instance Arbitrary PrimeVector where
   arbitrary = fromInteger <$> arbitrary
   shrink =
-    map (fromPrimes . map (second getPositive)) .
-    shrink .
-    map (second Positive) . primeDecomposition
+    map (fromPrimes . map (second getPositive))
+      . shrink
+      . map (second Positive)
+      . primeDecomposition
 
 instance NFData PrimeVector where
   rnf = rnf . primeDecomposition

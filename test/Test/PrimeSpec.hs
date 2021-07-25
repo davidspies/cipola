@@ -1,14 +1,13 @@
-{-# LANGUAGE MultiWayIf #-}
-
 module Test.PrimeSpec
-    ( spec
-    ) where
+  ( spec,
+  )
+where
 
-import Prelude hiding (toInteger)
 import Prime
 import Test.Hspec
 import Test.QuickCheck
 import ToInteger (toInteger)
+import Prelude hiding (toInteger)
 
 spec :: Spec
 spec = do
@@ -23,9 +22,11 @@ spec = do
     it "should handle Fermat pseudoprimes" $ do
       341 `shouldNotSatisfy` isPrime
       -561 `shouldNotSatisfy` isPrime
-  describe "mkPrime" $ it "should work" $ property $ \n ->
-    if
-      | n <= 1 -> mkPrime n === Nothing
-      | otherwise -> case mkPrime n of
-          Nothing -> property $ not $ isPrime n
-          Just p  -> property (isPrime n) .&&. toInteger p === n
+  describe "mkPrime" $
+    it "should work" $
+      property $ \n ->
+        if n <= 1
+          then mkPrime n === Nothing
+          else case mkPrime n of
+            Nothing -> property $ not $ isPrime n
+            Just p -> property (isPrime n) .&&. toInteger p === n

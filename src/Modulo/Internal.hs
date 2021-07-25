@@ -1,22 +1,22 @@
-{-# LANGUAGE FlexibleContexts #-}
-{-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE UndecidableInstances #-}
 
 module Modulo.Internal
-    ( Modulo(..)
-    , E
-    , modulo
-    , modulusOf
-    ) where
+  ( Modulo (..),
+    E,
+    modulo,
+    modulusOf,
+  )
+where
 
 import Data.Bifunctor (first)
 import Data.Proxy (Proxy (Proxy))
 import Data.Reflection (Reifies (..))
-import Prelude hiding (toInteger)
 import System.Random (Random (..))
 import ToInteger (ToInteger (..))
+import Prelude hiding (toInteger)
 
 newtype Modulo = Modulo {modulus :: Integer}
+
 newtype E s = E Integer
   deriving (Show)
 

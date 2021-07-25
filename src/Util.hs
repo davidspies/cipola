@@ -1,9 +1,10 @@
 module Util
-    ( Parity(..)
-    , parity
-    , sqr
-    , withPhantom
-    ) where
+  ( Parity (..),
+    parity,
+    sqr,
+    withPhantom,
+  )
+where
 
 data Parity = Even | Odd
 

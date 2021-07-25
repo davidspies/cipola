@@ -1,14 +1,10 @@
-{-# LANGUAGE FlexibleContexts #-}
-{-# LANGUAGE LambdaCase #-}
-{-# LANGUAGE Rank2Types #-}
-{-# LANGUAGE ScopedTypeVariables #-}
-
 module Factorize
-    ( factorize
-    ) where
+  ( factorize,
+  )
+where
 
 import Control.Applicative ((<|>))
-import Control.Monad (foldM, void)
+import Control.Monad (foldM_, void)
 import Control.Parallel.Strategies (parBuffer, rdeepseq, using)
 import qualified Data.DList as DList
 import Data.Maybe (fromJust)
@@ -17,13 +13,13 @@ import Data.Proxy (Proxy)
 import Data.Reflection (Reifies, reify)
 import EllipticCurve (EPOC, PointOnCurve (..), randomPoints, (|*?|))
 import Modulo (Modulo (Modulo))
-import Prelude hiding (toInteger)
 import Prime (Prime, mkPrime, primePowers)
 import ToInteger (toInteger)
+import Prelude hiding (toInteger)
 
 pickBase :: Integer -> [Integer]
 pickBase n =
-    map (toInteger . fst) $ takeWhile ((< m) . toInteger) primePowers
+  map (toInteger . fst) $ takeWhile ((< m) . toInteger) primePowers
   where
     p :: Double
     p = sqrt (fromInteger n)
@@ -40,7 +36,7 @@ maybeLeft = \case
 tryPOC :: Reifies s Modulo => [Integer] -> EPOC s -> Maybe Integer
 tryPOC base pa = maybeLeft $ do
   (PointOnCurve p) <- pa
-  void $ foldM (flip (|*?|)) p base
+  foldM_ (flip (|*?|)) p base
 
 firstJust :: [Maybe a] -> Maybe a
 firstJust = foldr (<|>) Nothing
@@ -49,12 +45,11 @@ findAFactor :: Integer -> Integer
 findAFactor n
   | even n = 2
   | otherwise = reify (Modulo n) $ \(_ :: Proxy s) ->
-      fromJust $
+    fromJust $
       firstJust
-      (
-        [tryPOC base p | p <- randomPoints :: [EPOC s]]
-        `using` parBuffer 100 rdeepseq
-      )
+        ( [tryPOC base p | p <- randomPoints :: [EPOC s]]
+            `using` parBuffer 100 rdeepseq
+        )
   where
     base = pickBase n
 
@@ -65,5 +60,5 @@ factorize = DList.toList . go
       LT -> error "Must be positive"
       EQ -> DList.empty
       GT -> case mkPrime n of
-        Just p  -> DList.singleton p
+        Just p -> DList.singleton p
         Nothing -> let k = findAFactor n in go k <> go (n `quot` k)

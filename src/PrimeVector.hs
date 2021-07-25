@@ -1,19 +1,17 @@
-{-# LANGUAGE LambdaCase #-}
-{-# LANGUAGE ScopedTypeVariables #-}
-
 module PrimeVector
-    ( PrimeVector
-    , fromPrimes
-    , fromUnsortedPrimeList
-    , primeDecomposition
-    , toInteger
-    ) where
+  ( PrimeVector,
+    fromPrimes,
+    fromUnsortedPrimeList,
+    primeDecomposition,
+    toInteger,
+  )
+where
 
 import Data.List (group, sort)
 import Factorize (factorize)
-import Prelude hiding (toInteger)
 import Prime (Prime, PrimePow)
 import ToInteger (ToInteger (..))
+import Prelude hiding (toInteger)
 
 newtype PrimeVector = PrimeVector [PrimePow]
   deriving (Eq)
@@ -48,8 +46,8 @@ fromPrimes xs0 = validate xs0 `seq` PrimeVector xs0
   where
     validate [] = ()
     validate ((_, n0) : _) | n0 <= 0 = error "Exponents not all positive"
-    validate ((p0, _) : (p1, _) : _) | toInteger p1 < toInteger p0 =
-      error "Terms out of order"
+    validate ((p0, _) : (p1, _) : _)
+      | toInteger p1 <= toInteger p0 = error "Terms out of order"
     validate ((_, _) : xs) = validate xs
 
 fromUnsortedPrimeList :: [Prime] -> PrimeVector

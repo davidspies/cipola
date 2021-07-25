@@ -1,7 +1,8 @@
 module Prime.Sieve
-    ( fmergeAll
-    , primes
-    ) where
+  ( fmergeAll,
+    primes,
+  )
+where
 
 merge :: Ord a => [a] -> [a] -> [a]
 merge [] ys = ys
@@ -11,11 +12,11 @@ merge xs@(x : xs') ys@(y : ys')
   | otherwise = x : merge xs' ys
 
 fmerge :: Ord a => [a] -> [a] -> [a]
-fmerge [] ys       = ys
+fmerge [] ys = ys
 fmerge (x : xs) ys = x : merge xs ys
 
 fmergePrefix :: Ord a => Int -> [[a]] -> ([a], [[a]])
-fmergePrefix _ []       = ([], [])
+fmergePrefix _ [] = ([], [])
 fmergePrefix 1 (x : xs) = (x, xs)
 fmergePrefix n xs = (fmerge l r, rest)
   where
@@ -40,10 +41,10 @@ exclude xs@(x : xs') ys@(y : ys') = case compare x y of
   GT -> exclude xs ys'
 
 oddPrimes :: [Integer]
-oddPrimes = 3 : exclude [5,7..] oddComposites
+oddPrimes = 3 : exclude [5, 7 ..] oddComposites
 
 oddComposites :: [Integer]
-oddComposites = fmergeAll [[p * p, p * (p + 2)..] | p <- oddPrimes]
+oddComposites = fmergeAll [[p * p, p * (p + 2) ..] | p <- oddPrimes]
 
 primes :: [Integer]
 primes = 2 : oddPrimes

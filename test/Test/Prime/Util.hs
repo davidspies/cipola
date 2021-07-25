@@ -1,13 +1,13 @@
 {-# OPTIONS_GHC -Wno-orphans #-}
 
-module Test.Prime.Util() where
+module Test.Prime.Util () where
 
 import Control.DeepSeq (NFData (..))
 import Data.Maybe (fromMaybe)
-import Prelude hiding (toInteger)
 import Prime
 import Test.QuickCheck
 import ToInteger (toInteger)
+import Prelude hiding (toInteger)
 
 instance Arbitrary Prime where
   arbitrary = do
@@ -15,9 +15,10 @@ instance Arbitrary Prime where
     let dp = downPrime n
         up = upPrime n
     case dp of
-      Nothing  -> return up
-      Just dp' -> return $
-        if toInteger up - n < n - toInteger dp' then up else dp'
+      Nothing -> return up
+      Just dp' ->
+        return $
+          if toInteger up - n < n - toInteger dp' then up else dp'
 
 instance NFData Prime where
   rnf = rnf . toInteger
@@ -26,8 +27,8 @@ downPrime :: Integer -> Maybe Prime
 downPrime n
   | n <= 1 = Nothing
   | otherwise = case mkPrime n of
-      Nothing -> downPrime (n - 1)
-      Just p  -> Just p
+    Nothing -> downPrime (n - 1)
+    Just p -> Just p
 
 upPrime :: Integer -> Prime
 upPrime n

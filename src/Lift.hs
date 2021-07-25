@@ -1,14 +1,14 @@
-module Lift(rootPrimePow) where
+module Lift (rootPrimePow) where
 
 import Cipola (cipola)
 import Data.Foldable (foldl')
 import Data.Reflection (reify)
 import Modulo (Modulo (Modulo), inv, modulo)
 import Pow2 (rootOddPow2)
-import Prelude hiding (toInteger)
 import Prime (PrimePow)
 import ToInteger (toInteger)
 import Util (sqr)
+import Prelude hiding (toInteger)
 
 liftSol :: PrimePow -> Integer -> Integer -> Integer
 liftSol (prime, curPow) val sol = mult * (prime' ^ curPow) + sol
@@ -20,14 +20,15 @@ liftSol (prime, curPow) val sol = mult * (prime' ^ curPow) + sol
     mult = reify (Modulo prime') $ \m ->
       let n = ((k - j) `modulo` m)
           twoSolInv = inv $ (2 * sol) `modulo` m
-      in toInteger $ n * twoSolInv
+       in toInteger $ n * twoSolInv
 
 rootOddRelPrimePow :: Integer -> PrimePow -> [Integer]
 rootOddRelPrimePow a (p, k) =
-    (\sol0 -> foldl' (\prevSol i -> liftSol (p, i) a prevSol) sol0 [1..(k - 1)]) <$> cipola a p
+  (\sol0 -> foldl' (\prevSol i -> liftSol (p, i) a prevSol) sol0 [1 .. (k - 1)]) <$> cipola a p
 
 divides :: Integer -> Integer -> Bool
 divides a b = rem b a == 0
+
 infix 4 `divides`
 
 rootRelPrimePow :: Integer -> PrimePow -> [Integer]
