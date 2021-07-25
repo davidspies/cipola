@@ -6,6 +6,7 @@ module Modulo
   )
 where
 
+import Control.Monad (foldM)
 import Data.Foldable (foldl')
 import Data.Reflection (Reifies (..))
 import Modulo.Internal as X
@@ -42,13 +43,7 @@ euclidean a b = go (1, 0, a) (0, 1, b)
         (m, r2) = r0 `divMod` r1
 
 crt :: [(Integer, Integer)] -> Maybe (Integer, Integer)
-crt =
-  foldl'
-    ( \case
-        Nothing -> const Nothing
-        Just (x1, m1) -> \(x2, m2) -> crt2 (x1, m1) (x2, m2)
-    )
-    (Just (0, 1))
+crt = foldM crt2 (0, 1)
 
 crt2 :: (Integer, Integer) -> (Integer, Integer) -> Maybe (Integer, Integer)
 crt2 (a1, m1) (a2, m2)
@@ -56,5 +51,5 @@ crt2 (a1, m1) (a2, m2)
   | otherwise = Nothing
   where
     (x, y, g) = euclidean m1 m2
-    m = m1 * m2 `div` g
+    m = m1 * (m2 `div` g)
     r = a1 `mod` g
